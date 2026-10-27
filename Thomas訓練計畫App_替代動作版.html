@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Thomas · Training Program</title>
+<style>
+:root{
+  --bg:#0D110F;
+  --paper:#161B18;
+  --paper2:#1D2320;
+  --ink:#F1F3EF;
+  --accent:#33C98A;
+  --accent-dim:#1F7A54;
+  --accent-soft:#173226;
+  --line:#2B322D;
+  --muted:#8B9389;
+  --warn:#E8763F;
+  --warn-soft:#2E1F16;
+  --radius:2px;
+  font-size:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Noto Sans TC",Helvetica,Arial,sans-serif;
+  min-height:100vh;padding-bottom:72px;
+}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.01em;}
+input,textarea{font-family:inherit;color:var(--ink);}
+.tabular{font-variant-numeric:tabular-nums;}
+
+/* ===== Top bar ===== */
+.topbar{background:#000;color:#fff;padding:18px 18px 16px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);}
+.topbar .brand-eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);font-weight:700;}
+.topbar h1{font-size:19px;letter-spacing:.01em;margin-top:2px;display:flex;align-items:baseline;gap:8px;}
+.topbar h1 .tick{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:1px;}
+.topbar .sub{font-size:12px;color:var(--muted);margin-top:3px;}
+
+/* ===== Bottom nav ===== */
+.tabbar{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--paper);border-top:1px solid var(--line);z-index:30;padding-bottom:env(safe-area-inset-bottom);}
+.tabbar button{appearance:none;border:none;background:none;padding:10px 4px 8px;font-family:inherit;color:var(--muted);
+  font-size:11px;letter-spacing:.04em;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
+.tabbar button .dot{width:5px;height:5px;border-radius:50%;background:transparent;}
+.tabbar button.active{color:var(--ink);font-weight:700;}
+.tabbar button.active .dot{background:var(--accent);}
+
+main{max-width:660px;margin:0 auto;padding:16px;}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.section-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.section-title .num{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.06em;}
+.section-title h2{font-size:15px;}
+
+.btn{appearance:none;border:1px solid var(--ink);background:var(--ink);color:#0D110F;font-family:inherit;font-weight:700;
+  font-size:13px;letter-spacing:.03em;padding:11px 16px;border-radius:var(--radius);cursor:pointer;text-align:center;}
+.btn.ghost{background:transparent;color:var(--ink);}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:#06140D;}
+.btn.block{width:100%;display:block;}
+.btn.sm{padding:7px 10px;font-size:11px;}
+.btn:disabled{opacity:.35;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ===== Home ===== */
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:4px;}
+.week-day{text-align:center;padding:8px 2px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);}
+.week-day.today{border-color:var(--accent);}
+.week-day .wd{font-size:9px;color:var(--muted);letter-spacing:.05em;}
+.week-day .dnum{font-size:12px;font-weight:700;margin:3px 0;}
+.week-day .badge{display:inline-block;min-width:18px;height:18px;line-height:18px;font-size:11px;font-weight:800;
+  background:var(--accent);color:#06140D;border-radius:50%;}
+.week-day .badge.empty{background:transparent;color:var(--line);border:1px dashed var(--line);}
+
+.daypick{display:flex;flex-direction:column;gap:8px;}
+.daypick .dbtn{border:1px solid var(--line);background:var(--paper2);border-radius:var(--radius);padding:12px 14px;
+  text-align:left;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.daypick .dbtn .l{}
+.daypick .dbtn .dl{font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:800;}
+.daypick .dbtn .dn{font-size:14px;font-weight:700;margin-top:2px;color:var(--ink);}
+.daypick .dbtn .dm{font-size:11px;color:var(--muted);margin-top:2px;}
+.daypick .dbtn .key{font-size:10px;color:var(--muted);text-align:right;white-space:nowrap;}
+.daypick .dbtn.cardio{border-style:dashed;}
+
+.check-item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;font-size:12.5px;border-top:1px solid var(--line);}
+.check-item:first-child{border-top:none;}
+.check-item input{margin-top:3px;}
+.deload-flag{margin-top:10px;padding:10px 12px;background:var(--warn-soft);border:1px solid var(--warn);border-radius:var(--radius);
+  font-size:12.5px;color:var(--warn);font-weight:700;}
+
+.note{font-size:12.5px;line-height:1.6;color:var(--muted);border-left:2px solid var(--accent);padding:6px 0 6px 10px;margin-top:8px;}
+
+/* ===== Session ===== */
+.dayhead{background:#000;color:#fff;padding:14px 16px;border-radius:var(--radius);margin-bottom:14px;border:1px solid var(--line);}
+.dayhead .dl{font-size:10px;letter-spacing:.2em;color:var(--accent);font-weight:800;}
+.dayhead h2{color:#fff;font-size:18px;margin-top:2px;}
+.dayhead .meta{font-size:11.5px;color:var(--muted);margin-top:5px;}
+
+.ex-card{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+.ex-head{background:var(--paper2);padding:10px 12px;border-bottom:1px solid var(--line);}
+.ex-head .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.ex-head .name{font-size:14px;font-weight:800;}
+.ex-head .en{font-size:9.5px;color:var(--muted);letter-spacing:.08em;}
+.ex-head .presc{display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--muted);flex-wrap:wrap;}
+.ex-head .presc b{color:var(--ink);font-weight:700;}
+.ex-head .cue{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5;}
+.sugg{margin-top:8px;padding:8px 10px;background:var(--accent-soft);border:1px solid var(--accent-dim);border-radius:var(--radius);
+  font-size:11.5px;color:var(--accent);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.sugg button{background:var(--accent);border:none;color:#06140D;font-weight:800;font-size:10.5px;padding:5px 9px;border-radius:20px;cursor:pointer;font-family:inherit;}
+
+.set-table{width:100%;border-collapse:collapse;}
+.set-table th{font-size:10px;color:var(--muted);text-align:left;padding:8px 8px 4px;letter-spacing:.04em;}
+.set-table td{padding:4px 8px 8px;}
+.set-table input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+  padding:8px 6px;font-size:13px;color:var(--ink);text-align:center;}
+.set-table input:focus{border-color:var(--accent);outline:none;}
+.set-table .sn{font-size:12px;color:var(--muted);font-weight:700;text-align:center;}
+.set-table .done-cell{text-align:center;}
+.set-table .done-cell input[type=checkbox]{width:auto;}
+
+.timer-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 24px);margin:0 12px 12px;
+  padding:10px;border:1px dashed var(--accent-dim);border-radius:var(--radius);background:var(--accent-soft);
+  color:var(--accent);font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;}
+.timer-btn.running{background:var(--warn-soft);border-color:var(--warn);color:var(--warn);}
+
+textarea{width:100%;border:1px solid var(--line);border-radius:var(--radius);padding:10px;font-size:13px;resize:vertical;
+  min-height:60px;background:var(--bg);}
+
+/* ===== Progress tab ===== */
+.wex-card{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;background:var(--paper2);}
+.wex-card .top{display:flex;justify-content:space-between;align-items:baseline;}
+.wex-card .name{font-size:13.5px;font-weight:700;}
+.wex-card .cat{font-size:9.5px;color:var(--muted);letter-spacing:.06em;}
+.wex-card .w{font-size:20px;font-weight:800;color:var(--accent);margin-top:6px;}
+.wex-card .w span{font-size:11px;color:var(--muted);font-weight:500;}
+
+.chain{display:flex;flex-direction:column;gap:0;margin-top:8px;}
+.chain-node{display:flex;gap:10px;padding:10px 0;border-top:1px dashed var(--line);}
+.chain-node:first-child{border-top:none;}
+.chain-node .idx{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#06140D;font-weight:800;
+  font-size:12px;display:flex;align-items:center;justify-content:center;flex:none;}
+.chain-node .txt b{display:block;font-size:13px;}
+.chain-node .txt span{font-size:11.5px;color:var(--muted);}
+
+table.data{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+table.data th,table.data td{border:1px solid var(--line);padding:8px;text-align:left;vertical-align:top;}
+table.data th{background:var(--paper2);font-size:10.5px;letter-spacing:.04em;color:var(--muted);font-weight:700;}
+
+/* ===== Log tab ===== */
+.log-item{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;}
+.log-item .top{display:flex;justify-content:space-between;align-items:baseline;}
+.log-item .date{font-size:13px;font-weight:800;}
+.log-item .day{font-size:11px;color:var(--accent);font-weight:800;}
+.log-ex{font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px;margin-top:8px;}
+.log-ex div{padding:2px 0;}
+.log-ex b{color:var(--ink);}
+.flag-list{margin-top:8px;font-size:11.5px;color:var(--accent);}
+.log-item .del{font-size:11px;color:var(--warn);background:none;border:none;font-family:inherit;cursor:pointer;padding:0;margin-top:8px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+
+.wc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.wc-row label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;}
+.wc-row input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:9px;font-size:13px;color:var(--ink);}
+.wc-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;}
+.wc-table th,.wc-table td{border:1px solid var(--line);padding:6px;text-align:center;}
+.wc-table th{background:var(--paper2);color:var(--muted);font-weight:700;font-size:10px;}
+
+.faq-item{border-top:1px solid var(--line);padding:10px 0;}
+.faq-item:first-child{border-top:none;}
+.faq-item .q{font-size:13px;font-weight:700;}
+.faq-item .a{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.6;}
+
+.hidden{display:none !important;}
+
+/* ===== 深色主題 ===== */
+[data-theme="dark"]{
+  --bg:#111315;
+  --paper:#1A1D20;
+  --ink:#E9EBED;
+  --accent:#E0A33C;
+  --accent-dark:#0D0F11;
+  --accent-soft:#2A2318;
+  --line:#2B2F33;
+  --muted:#959A9F;
+  --warn:#E8846A;
+  --warn-soft:#33221E;
+}
+[data-theme="dark"] .topbar{background:#0D0F11;}
+[data-theme="dark"] .topbar .brand-eyebrow{color:#9A7736;}
+[data-theme="dark"] .topbar .sub{color:#9AA0A5;}
+.themebtn{
+  position:absolute;top:16px;right:16px;
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.10);color:#fff;
+  font-size:15px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.themebtn:active{transform:scale(.94);}
+
+
+/* ===== 動作示意圖 ===== */
+.figrow{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:6px;
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:10px 8px;margin-bottom:4px;
+}
+.figrow.one{grid-template-columns:1fr;max-width:60%;margin-left:auto;margin-right:auto;}
+.figbox{min-width:0;}
+.figsvg{width:100%;height:auto;display:block;}
+.figbox figcaption{
+  font-size:11px;line-height:1.45;text-align:center;
+  color:var(--muted);margin-top:2px;padding:0 2px;
+}
+.figarrow{color:var(--accent);font-size:19px;font-weight:700;opacity:.65;}
+/* 圖形顏色全部走變數 → 深色模式自動反轉 */
+.figsvg .fl{stroke:var(--ink);stroke-linecap:round;fill:none;}
+.figsvg .fl.dim{opacity:.30;}
+.figsvg .fh{stroke:var(--ink);fill:var(--paper);}
+.figsvg .fg{stroke:var(--ink);opacity:.25;}
+.figsvg .fp{fill:var(--accent);}
+.figsvg .fp2{fill:var(--ink);opacity:.17;}
+.figsvg .fc{stroke:var(--accent);opacity:.55;fill:none;}
+.figsvg .fa{stroke:var(--warn);fill:var(--warn);}
+
+/* ===== 動作庫 ===== */
+.exsearch{
+  display:flex;align-items:center;gap:8px;
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;
+}
+.exsearch input{
+  flex:1;border:0;background:transparent;color:var(--ink);
+  font-size:15px;font-family:inherit;outline:none;min-width:0;
+}
+.exsearch .ic{opacity:.5;font-size:14px;}
+.exfilters{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;}
+.exfilters button{
+  flex:0 0 auto;padding:6px 12px;font-size:12px;font-weight:700;
+  border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);color:var(--muted);cursor:pointer;
+  font-family:inherit;letter-spacing:.02em;
+}
+.exfilters button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.exrow{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 2px;border-bottom:1px solid var(--line);cursor:pointer;
+}
+.exrow:active{opacity:.6;}
+.exrow .ini{
+  flex:0 0 38px;height:38px;border-radius:var(--radius);
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;letter-spacing:.02em;
+}
+.exrow .tx{flex:1;min-width:0;}
+.exrow .n{font-size:14.5px;font-weight:700;}
+.exrow .e{font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:1px;}
+.exrow .ar{color:var(--muted);font-size:18px;flex:0 0 auto;}
+.exback{
+  display:inline-flex;align-items:center;gap:5px;
+  background:none;border:0;color:var(--accent);
+  font-size:13px;font-weight:700;font-family:inherit;
+  cursor:pointer;padding:0;margin-bottom:12px;
+}
+.exhead{margin-bottom:16px;}
+.exhead h2{font-size:22px;letter-spacing:.01em;}
+.exhead .en{font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.exchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.exchip{
+  font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);
+}
+.exsec{margin-top:20px;}
+.exsec > .t{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);font-weight:800;margin-bottom:9px;
+}
+.exsteps{counter-reset:s;list-style:none;}
+.exsteps li{
+  counter-increment:s;position:relative;
+  padding-left:30px;margin-bottom:11px;font-size:14px;line-height:1.62;
+}
+.exsteps li::before{
+  content:counter(s);position:absolute;left:0;top:1px;
+  width:21px;height:21px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.exmiss{list-style:none;}
+.exmiss li{
+  position:relative;padding-left:20px;margin-bottom:9px;
+  font-size:13.5px;line-height:1.6;color:var(--ink);
+}
+.exmiss li::before{
+  content:'';position:absolute;left:4px;top:8px;
+  width:6px;height:6px;border-radius:50%;background:var(--warn);
+}
+.exscale{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.exscale div{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:11px 12px;
+}
+.exscale .h{font-size:10.5px;letter-spacing:.1em;font-weight:800;color:var(--muted);text-transform:uppercase;}
+.exscale p{font-size:13px;line-height:1.55;margin-top:5px;}
+.exsafe{
+  background:var(--warn-soft);border-left:3px solid var(--warn);
+  padding:11px 13px;border-radius:var(--radius);
+  font-size:13.5px;line-height:1.6;
+}
+.exsafe b{color:var(--warn);}
+.exwhere{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius);padding:11px 13px;
+  font-size:13px;line-height:1.6;color:var(--muted);
+}
+.exwhere b{color:var(--ink);}
+.exresume{
+  position:sticky;top:0;z-index:15;
+  display:flex;align-items:center;gap:8px;
+  background:var(--accent);color:#fff;
+  padding:11px 14px;margin:-2px 0 14px;
+  border-radius:var(--radius);
+  font-size:13.5px;font-weight:700;
+  border:0;width:100%;font-family:inherit;cursor:pointer;
+  letter-spacing:.02em;
+}
+.exresume:active{opacity:.85;}
+.exresume .sp{margin-left:auto;font-weight:500;opacity:.85;font-size:12px;}
+
+/* ===== 替代動作 ===== */
+.exalt{list-style:none;padding:0;margin:0;}
+.exalt li{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:11px 12px;margin-bottom:8px;}
+.exalt .an{font-size:14px;font-weight:800;}
+.exalt .ag{display:inline-block;margin-top:4px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);}
+.exalt .ah{font-size:13px;line-height:1.6;color:var(--muted);margin-top:6px;}
+.exaltnote{font-size:12px;line-height:1.6;color:var(--muted);margin-top:6px;}
+
+/* ===== 換動作 ===== */
+.swapbtn{background:none;border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:800;font-family:inherit;
+  padding:3px 9px;border-radius:999px;cursor:pointer;margin-left:6px;letter-spacing:.03em;}
+.swaptag{display:inline-block;margin-left:6px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);}
+.swp{border-top:1px solid var(--line);padding:10px 12px 12px;background:var(--bg);}
+.swp .st{font-size:11px;letter-spacing:.12em;font-weight:800;color:var(--muted);margin-bottom:8px;}
+.swp .opt{border:1px solid var(--line);background:var(--paper);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;}
+.swp .opt .an{font-size:13.5px;font-weight:800;}
+.swp .opt .ag{font-size:11px;color:var(--muted);margin-top:2px;}
+.swp .opt .rx{font-size:12px;margin-top:6px;color:var(--ink);}
+.swp .opt .rx b{color:var(--accent);}
+.swp .opt .go{margin-top:8px;width:100%;}
+.exnone{padding:34px 10px;text-align:center;color:var(--muted);font-size:13.5px;}
+.exguide{
+  background:none;border:0;padding:0;margin-left:6px;
+  color:var(--accent);font-size:11px;font-weight:800;
+  font-family:inherit;cursor:pointer;letter-spacing:.04em;
+  border-bottom:1px dotted var(--accent);
+}
+
+</style>
+<meta name="theme-color" content="#0D0F11">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand-eyebrow">FAT LOSS PRIORITY · 4-DAY SPLIT · GYM EDITION</div>
+  <h1><span class="tick"></span>Thomas Training</h1>
+  <div class="sub">Upper / Lower · 下肢 2 · 上肢 2 · 有氧 1（選配）</div>
+  <button class="themebtn" id="themeBtn" aria-label="切換深色">☾</button>
+</div>
+
+<main id="view"></main>
+
+<nav class="tabbar">
+  <button data-tab="home"><span class="dot"></span>本週</button>
+  <button data-tab="progress"><span class="dot"></span>重量進度</button>
+  <button data-tab="log"><span class="dot"></span>紀錄</button>
+  <button data-tab="ex"><span class="dot"></span>動作</button>
+  <button data-tab="guide"><span class="dot"></span>說明</button>
+</nav>
+
+<script>
+/* ============ DATA (from PDF) ============ */
+const DAYS = {
+  1:{ name:"下半身 A", key:"BACK SQUAT", meta:"5 個動作 · 90 分以上",
+    warmup:"5–8 分鐘動態熱身，主要動作前做 3–4 組漸進式 ramp-up（空槓 → 輕重量 → 接近工作重量）",
+    exercises:[
+      {name:"背蹲舉", en:"BACK SQUAT", sets:4, reps:"6–8", rir:"2", rest:"2.5–3 min", load:"試重", cat:"BIG_LOWER", note:"第一次上場依規則找起始重量"},
+      {name:"羅馬尼亞硬舉", en:"ROMANIAN DEADLIFT", sets:3, reps:"8–10", rir:"2", rest:"2 min", load:"試重", cat:"OTHER", note:"膝蓋微彎不動，感覺腿後拉開"},
+      {name:"腿推", en:"LEG PRESS", sets:2, reps:"10–12", rir:"1", rest:"2 min", load:"試重", cat:"OTHER", note:"脊椎負荷低，補股四頭訓練量"},
+      {name:"腿後彎舉", en:"LEG CURL", sets:2, reps:"10–12", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:""},
+      {name:"站姿提踵", en:"STANDING CALF RAISE", sets:3, reps:"10–12", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:"頂端停 1 秒"}
+    ]},
+  2:{ name:"上半身 A — 推為主", key:"BENCH PRESS", meta:"6 個動作 · 90 分以上",
+    warmup:"5–8 分鐘動態熱身，主要動作前做 3–4 組漸進式 ramp-up",
+    exercises:[
+      {name:"槓鈴臥推", en:"BARBELL BENCH PRESS", sets:4, reps:"5", rir:"—", rest:"2.5–3 min", load:"30", loadUnit:"kg", cat:"BIG_UPPER", note:"訓練最前面，優先進步"},
+      {name:"胸靠划船", en:"CHEST-SUPPORTED ROW", sets:3, reps:"10–12", rir:"1", rest:"2 min", load:"試重", cat:"OTHER", note:""},
+      {name:"器械胸推", en:"MACHINE CHEST PRESS", sets:2, reps:"8–12", rir:"1", rest:"2 min", load:"兩邊各 5", loadUnit:"kg", cat:"OTHER", note:"接續胸大肌訓練量"},
+      {name:"坐姿肩推", en:"SEATED DB SHOULDER PRESS", sets:2, reps:"8–12", rir:"1", rest:"2 min", load:"約 7.x", loadUnit:"kg", cat:"OTHER_DB", note:"三角肌前中束為主"},
+      {name:"飛鳥", en:"DUMBBELL FLY", sets:2, reps:"10–15", rir:"1", rest:"90 sec", load:"2.5", loadUnit:"kg", cat:"OTHER_DB", note:"胸大肌伸展位刺激"},
+      {name:"三頭下壓", en:"TRICEPS PUSHDOWN", sets:2, reps:"10–15", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:""}
+    ]},
+  3:{ name:"下半身 B", key:"TRAP-BAR DEADLIFT", meta:"5 個動作 · 90 分以上",
+    warmup:"5–8 分鐘動態熱身，主要動作前做 3–4 組漸進式 ramp-up",
+    exercises:[
+      {name:"六角槓硬舉", en:"TRAP-BAR DEADLIFT", sets:3, reps:"6–8", rir:"2", rest:"2.5–3 min", load:"試重", cat:"BIG_LOWER", note:"第一次上場依規則找起始重量"},
+      {name:"保加利亞分腿蹲", en:"BULGARIAN SPLIT SQUAT", sets:3, reps:"10 /邊", rir:"2", rest:"2 min", load:"試重", cat:"OTHER", note:""},
+      {name:"臀推", en:"HIP THRUST", sets:2, reps:"10–12", rir:"1", rest:"2 min", load:"試重", cat:"OTHER", note:""},
+      {name:"腿伸屈", en:"LEG EXTENSION", sets:2, reps:"12–15", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:""},
+      {name:"坐姿提踵", en:"SEATED CALF RAISE", sets:2, reps:"12–15", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:""}
+    ]},
+  4:{ name:"上半身 B — 拉為主", key:"PULL-UP / LAT PULLDOWN", meta:"7 個動作 · 90 分以上",
+    warmup:"5–8 分鐘動態熱身，主要動作前做 3–4 組漸進式 ramp-up",
+    exercises:[
+      {name:"引體向上／滑輪下拉", en:"PULL-UP / LAT PULLDOWN", sets:4, reps:"6–10", rir:"2", rest:"2.5 min", load:"試重", cat:"OTHER", note:"做不到標準次數先用滑輪下拉"},
+      {name:"站姿肩推", en:"STANDING OHP", sets:3, reps:"6–10", rir:"2", rest:"2.5 min", load:"試重", cat:"BIG_UPPER", note:""},
+      {name:"坐姿滑輪划船", en:"CABLE ROW", sets:2, reps:"10–12", rir:"1", rest:"2 min", load:"試重", cat:"OTHER", note:""},
+      {name:"臉拉", en:"FACE PULL", sets:2, reps:"15", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER", note:"肩關節健康"},
+      {name:"斜板彎舉", en:"INCLINE DB CURL", sets:2, reps:"10–12", rir:"1", rest:"90 sec", load:"試重", cat:"OTHER_DB", note:""},
+      {name:"前平舉", en:"FRONT RAISE", sets:2, reps:"12–15", rir:"1", rest:"90 sec", load:"約 5.x", loadUnit:"kg", cat:"OTHER_DB", note:"前三角肌收尾動作，補到 2×/週"},
+      {name:"懸吊舉腿", en:"HANGING LEG RAISE", sets:2, reps:"10–12", rir:"1", rest:"90 sec", load:"徒手", cat:"OTHER", note:"正常呼吸，不憋氣"}
+    ]}
+};
+const CARDIO = {duration:"20–30 min", intensity:"Zone 2", activity:"腳踏車／划船機／快走（不含跑步）",
+  note:"也可以拆開做：在 Day 2 或 Day 4 訓練後額外加 15–20 分鐘低強度有氧，不用集中在單獨一天。避免安排在 Day 1 / Day 3 之前，以免影響深蹲與硬舉表現。"};
+
+const DELOAD_TRIGGERS = [
+  "連續 2 次訓練，主要動作表現退步",
+  "關節或肌肉持續痠痛不消",
+  "體重連續 1 週掉速超過 0.7 kg，合併疲勞感",
+  "連續兩晚睡眠明顯變差",
+  "對訓練提不起勁、開始想跳過"
+];
+const DELOAD_ADJUST = [
+  {k:"組數", v:"砍 30–40%（例如深蹲 4 組 → 2–3 組）"},
+  {k:"重量", v:"維持不變"},
+  {k:"RIR", v:"大重量提高到 RIR 3–4，孤立動作提高到 RIR 2–3"},
+  {k:"有氧", v:"維持或減量，不要在 deload 週加有氧"},
+  {k:"熱量", v:"如果是因體重掉太快觸發，同時把熱量往上加 150–200 kcal"}
+];
+
+/* ============ STATE / STORAGE ============ */
+const STORE_KEY = "thomas_gym_program_v1";
+function loadState(){
+  try{ const raw = localStorage.getItem(STORE_KEY); if(raw) return JSON.parse(raw); }catch(e){}
+  return {sessions:[], weights:{}, weekChecks:[], deloadChecklist:{}, theme:"light"};
+}
+function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+let state = loadState();
+
+/* ============ 訓練中草稿（Draft） ============
+   解決手機瀏覽器把背景分頁記憶體整個清掉／重整，導致進行中的訓練
+   （含 startTime，用來算時長）全部消失的問題。
+   跟正式紀錄分開存一個 key，不會混進已完成的訓練。
+   不做防抖、直接寫：系統可能在切出去的瞬間就回收分頁，
+   延遲寫入等於在賭它不會在那零點幾秒內動手。 */
+const DRAFT_KEY = STORE_KEY + "_draft";
+function saveDraft(){
+  if(!sessionCtx) return;
+  try{
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({sessionCtx: sessionCtx, savedAt: Date.now()}));
+  }catch(e){}
+}
+function clearDraft(){
+  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+}
+function restoreDraftIfAny(){
+  let raw = null;
+  try{ raw = localStorage.getItem(DRAFT_KEY); }catch(e){ return; }
+  if(!raw) return;
+  let draft;
+  try{ draft = JSON.parse(raw); }catch(e){ clearDraft(); return; }
+  const ctx = draft && draft.sessionCtx;
+  if(!ctx || !ctx.day){ clearDraft(); return; }
+  // 防呆：草稿的 day 必須還存在於現在的課表（cardio 例外），否則是舊版資料，
+  // 直接丟掉，不要拿去 render 導致整個 app 掛掉。
+  if(ctx.day!=="cardio" && !DAYS[ctx.day]){ clearDraft(); return; }
+  if(ctx.day!=="cardio" && !ctx.swaps) ctx.swaps = {};
+  const doneSets = Array.isArray(ctx.sets)
+    ? ctx.sets.reduce((a,rows)=> a + rows.filter(r=> r.weight!=="" || r.reps!=="").length, 0)
+    : 0;
+  const ago = draft.savedAt ? Math.max(0, Math.round((Date.now()-draft.savedAt)/60000)) : null;
+  const what = ctx.day==="cardio" ? "有氧" : ("DAY "+ctx.day+"，已填 "+doneSets+" 組");
+  const msg = "偵測到一次中斷的訓練（"+what
+    + (ago!==null ? "，約 "+ago+" 分鐘前中斷" : "") + "）。要繼續這次訓練嗎？\n\n選「取消」會放棄這次沒存檔的紀錄。";
+  if(confirm(msg)){
+    sessionCtx = ctx;
+    currentTab = "session";
+  } else {
+    clearDraft();
+  }
+}
+
+/* 開始／結束時間戳都在才算時長；不足 1 分鐘算 1 分鐘，避免顯示「0 分鐘」看起來像沒運動 */
+function sessionDurationMin(s){
+  if(typeof s.startTime!=="number" || typeof s.endTime!=="number") return null;
+  return Math.max(1, Math.round((s.endTime - s.startTime)/60000));
+}
+
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+
+function incrementFor(cat){
+  if(cat==="BIG_LOWER") return {amt:5, unit:"kg", label:"+5 kg"};
+  if(cat==="BIG_UPPER") return {amt:2.5, unit:"kg", label:"+2.5 kg"};
+  return null; // OTHER / OTHER_DB handled with generic text
+}
+function repCeiling(repsStr){
+  const nums = repsStr.match(/\d+(\.\d+)?/g);
+  if(!nums) return null;
+  return parseFloat(nums[nums.length-1]);
+}
+function parseRestSeconds(label){
+  const nums = label.match(/[\d.]+/g);
+  if(!nums) return 90;
+  const n = parseFloat(nums[nums.length-1]);
+  return label.includes("min") ? Math.round(n*60) : Math.round(n);
+}
+
+/* ============ 動作庫 ============
+   key = 課表裡的 en 欄位，課表改動作只要 en 對得上就自動有說明。
+   寫給第一次進健身房的人看：器材怎麼設定 → 怎麼做 → 會錯在哪 → 做不到怎麼退階。 */
+const EX_LIB = {
+  "BACK SQUAT": {
+    part:"下肢", muscles:"大腿前側、臀部、核心",
+    gear:"深蹲架＋槓鈴",
+    setup:"槓放在架上約鎖骨高度。一定要架安全槓（保護桿），高度設在你蹲到最低時槓的略下方。",
+    steps:[
+      "槓橫放在上背（肩膀後方的肌肉上），不是放在脖子",
+      "雙手握槓穩住，肩胛往後夾，胸口打開",
+      "站起把槓抬離架，往後退兩步，雙腳與肩同寬、腳尖微微外開",
+      "吸氣、腹部繃緊，屁股往後往下蹲到大腿至少與地面平行",
+      "腳掌踩穩推地板站起，站直後吐氣"
+    ],
+    mistakes:[
+      "膝蓋往內夾 → 想像把地板往外撐開",
+      "站起時屁股先抬、背彎起來 → 重量太重，降下來",
+      "腳跟離地 → 腳尖外開一點，或穿平底鞋、腳跟墊槓片",
+      "沒架安全槓 → 這是第一次上場最重要的一件事，不要省"
+    ],
+    easier:"只用空槓練動作；或改做高腳杯蹲、腿推",
+    harder:"依課表加重（每次 +5 kg）",
+    safety:"第一次上場先用空槓做 5–10 下確認動作和深度，再一段一段加上去試重。"
+  },
+  "TRAP-BAR DEADLIFT": {
+    part:"下肢", muscles:"臀部、腿後、背部",
+    gear:"六角槓",
+    setup:"六角槓放在地上，站進槓的正中間。",
+    steps:[
+      "雙腳與臀同寬站在槓中央，雙手握住兩側把手",
+      "屁股往後坐、膝蓋彎，背打直，胸口朝前",
+      "吸氣繃緊核心，腳踩地板把槓拉離地面",
+      "站直時肩膀往後、臀部夾緊，不用刻意往後仰",
+      "屁股往後推、控制著把槓放回地面"
+    ],
+    mistakes:[
+      "背彎起來像蝦子 → 立刻降重量，背打直優先於拉起來",
+      "用手臂拉 → 手只是掛鉤，出力的是腿和臀",
+      "槓離身體很遠 → 六角槓的好處就是重心在身體中線，站正中間"
+    ],
+    easier:"減重量；或改做羅馬尼亞硬舉、臀推",
+    harder:"依課表加重（每次 +5 kg）",
+    safety:"每一下都從地面重新開始，不要用反彈的力量連續拉。"
+  },
+  "ROMANIAN DEADLIFT": {
+    part:"下肢", muscles:"腿後肌、臀部",
+    gear:"槓鈴或啞鈴",
+    steps:[
+      "站直握槓放在大腿前方，雙腳與臀同寬",
+      "膝蓋微彎後固定不動（這不是深蹲）",
+      "屁股往後推，槓沿著大腿往下滑，上半身前傾",
+      "感覺腿後被拉緊到極限就停（多數人在膝蓋附近）",
+      "用臀部把身體帶回站直"
+    ],
+    mistakes:[
+      "硬要碰到地板 → 降到背還能保持打直的高度就好",
+      "背駝起來 → 重量太重，降下來",
+      "膝蓋越彎越多 → 動作發生在髖部，膝蓋角度固定"
+    ],
+    easier:"用啞鈴、更輕的重量；範圍縮小",
+    harder:"加重；下放放慢 3 秒"
+  },
+  "LEG PRESS": {
+    part:"下肢", muscles:"大腿前側、臀部",
+    gear:"腿推機",
+    setup:"調整椅背，讓膝蓋彎曲時大腿能靠近胸口但腰不會離開椅背。",
+    steps:[
+      "坐好，背和屁股完全貼住椅墊",
+      "雙腳與肩同寬踩在踏板中間偏上",
+      "解開安全鎖，慢慢讓踏板下降到膝蓋約 90 度",
+      "腳掌踩穩推回，膝蓋接近打直但不要完全鎖死"
+    ],
+    mistakes:[
+      "膝蓋完全打直鎖住 → 留一點彎度，保護膝關節",
+      "屁股離開椅墊、腰拱起 → 下降範圍縮小",
+      "膝蓋往內倒 → 膝蓋對準腳尖方向"
+    ],
+    easier:"減重量；下降範圍小一點",
+    harder:"加重；下放放慢"
+  },
+  "LEG CURL": {
+    part:"下肢", muscles:"腿後肌",
+    gear:"腿後彎舉機",
+    setup:"調整滾墊位置，讓它壓在小腿下方接近腳踝處；膝蓋要對齊機器轉軸。",
+    steps:[
+      "坐好或躺好，膝蓋對準機器的轉軸位置",
+      "把滾墊往身體方向彎到底",
+      "頂點停 1 秒感覺腿後收緊",
+      "慢慢放回起始位置，不要讓重量自己掉下去"
+    ],
+    mistakes:[
+      "屁股離開墊子借力 → 重量降下來",
+      "放下時直接鬆掉 → 下放也要控制，這段很重要"
+    ],
+    easier:"減重量",
+    harder:"加重；頂點停 2 秒"
+  },
+  "LEG EXTENSION": {
+    part:"下肢", muscles:"大腿前側",
+    gear:"腿伸屈機",
+    setup:"椅背調到膝蓋剛好在轉軸上，滾墊壓在腳踝上方。",
+    steps:[
+      "坐好，背貼椅背，雙手握住兩側把手",
+      "把腿往前伸直，抬到接近水平",
+      "頂點停 1 秒，感覺大腿前側繃緊",
+      "慢慢放回起始位置"
+    ],
+    mistakes:[
+      "用甩的力量踢上去 → 放慢，用肌肉推不是用慣性",
+      "膝蓋用力鎖死 → 伸到接近打直就好"
+    ],
+    easier:"減重量；範圍縮小",
+    harder:"加重；頂點停 2 秒"
+  },
+  "BULGARIAN SPLIT SQUAT": {
+    part:"下肢", muscles:"臀部、大腿前側",
+    gear:"臥推椅＋啞鈴",
+    steps:[
+      "背對椅子站一大步遠，一腳腳背放在椅面上",
+      "前腳踩穩，雙手各持啞鈴垂在身側",
+      "身體垂直往下沉，前腳膝蓋彎到約 90 度",
+      "前腳推地板站起，一邊做完再換腳"
+    ],
+    mistakes:[
+      "站太近 → 膝蓋壓力大，往前多站半步",
+      "後腳用力踩 → 後腳只負責平衡",
+      "站不穩 → 先徒手練，或一手扶架子"
+    ],
+    easier:"徒手做；後腳墊低一點",
+    harder:"加重啞鈴；下放放慢"
+  },
+  "HIP THRUST": {
+    part:"下肢", muscles:"臀部",
+    gear:"臥推椅＋槓鈴（槓上加護墊）",
+    steps:[
+      "上背靠在椅緣，槓橫放在髖部上方（一定要加護墊）",
+      "膝蓋彎曲、腳掌踩地，與肩同寬",
+      "腳跟推地把髖部往上頂，身體從膝蓋到肩膀成一直線",
+      "頂點夾緊臀部停 1 秒再慢慢放下"
+    ],
+    mistakes:[
+      "下巴抬高、腰過度反折 → 視線看前方，頂到成直線就停",
+      "感覺都在大腿前側 → 腳掌往屁股方向移近一點"
+    ],
+    easier:"減重量；或改躺地上做臀橋",
+    harder:"加重；頂點停 2–3 秒"
+  },
+  "STANDING CALF RAISE": {
+    part:"下肢", muscles:"小腿（腓腸肌）",
+    gear:"提踵機或史密斯機",
+    steps:[
+      "肩膀頂住墊子，前腳掌踩在踏板邊緣，腳跟懸空",
+      "腳跟盡量沉到最低，感覺小腿被拉開",
+      "用力踮到最高",
+      "頂點停 1 秒再慢慢放下"
+    ],
+    mistakes:[
+      "彈上彈下靠慣性 → 放慢，每下都沉到底、頂到頂",
+      "膝蓋一直彎 → 膝蓋保持接近打直（彎膝版是坐姿提踵）"
+    ],
+    easier:"減重量；雙腳一起做",
+    harder:"加重；單腳做"
+  },
+  "SEATED CALF RAISE": {
+    part:"下肢", muscles:"小腿（比目魚肌）",
+    gear:"坐姿提踵機",
+    steps:[
+      "坐好，膝蓋上方墊子壓住大腿，前腳掌踩踏板邊緣",
+      "解開安全鎖，腳跟沉到最低",
+      "用力踮到最高，頂點停 1 秒",
+      "慢慢放下"
+    ],
+    mistakes:[
+      "範圍很小的快速抖動 → 全範圍慢慢做才有效",
+      "用手推大腿借力 → 手只是扶著"
+    ],
+    easier:"減重量",
+    harder:"加重；頂點停 2 秒"
+  },
+  "BARBELL BENCH PRESS": {
+    part:"上肢推", muscles:"胸、肩前側、三頭",
+    gear:"臥推架＋槓鈴",
+    setup:"一定要架安全槓，或請人幫你保護（spotter）。躺下時眼睛大約在槓的正下方。",
+    steps:[
+      "躺平，雙腳踩穩地面，肩胛往後往下夾住椅面",
+      "雙手握槓比肩膀稍寬，手腕在手肘正上方",
+      "把槓推離掛鉤，移到胸口上方",
+      "吸氣，控制著把槓下降到碰到胸口下緣，手肘約 45 度斜後",
+      "推回起始位置，推的時候吐氣"
+    ],
+    mistakes:[
+      "手肘完全往兩側張開 → 約 45 度，肩膀才安全",
+      "屁股離開椅面 → 腳踩穩，屁股全程貼著",
+      "槓彈在胸口反彈 → 碰到停一下再推，不要用彈的",
+      "一個人練又不架安全槓 → 絕對不要，重量壓住會出不來"
+    ],
+    easier:"空槓練動作；或改器械胸推、啞鈴臥推",
+    harder:"依課表加重（每次 +2.5 kg）",
+    safety:"單獨訓練時務必架安全槓，高度設在胸口略上方。"
+  },
+  "MACHINE CHEST PRESS": {
+    part:"上肢推", muscles:"胸、三頭",
+    gear:"胸推機",
+    setup:"椅高調到把手大約在胸口中段高度。",
+    steps:[
+      "坐好，背貼椅背，肩膀往後往下沉",
+      "雙手握把手，手肘略低於肩膀",
+      "往前推到手臂接近打直（不鎖死）",
+      "慢慢收回到胸口旁，感覺胸部被拉開"
+    ],
+    mistakes:[
+      "肩膀往前聳 → 肩膀往後往下壓住椅背",
+      "把手位置太高 → 椅子調高一點，避免肩膀不適"
+    ],
+    easier:"減重量",
+    harder:"加重；收回放慢 3 秒"
+  },
+  "STANDING OHP": {
+    part:"上肢推", muscles:"肩膀、三頭、核心",
+    gear:"槓鈴或啞鈴",
+    steps:[
+      "站直，雙腳與肩同寬，槓在肩膀前方鎖骨高度",
+      "腹部和臀部收緊，肋骨往下收",
+      "頭稍微往後讓出空間，把槓往頭頂正上方推",
+      "推到手臂打直、槓在頭頂正上方，再慢慢放回肩膀"
+    ],
+    mistakes:[
+      "腰往後折很多 → 收緊核心和臀部，重量降下來",
+      "槓在身體前方 → 過了額頭就要把頭帶回來，槓走直線"
+    ],
+    easier:"改坐姿肩推；或用啞鈴",
+    harder:"加重；放下放慢"
+  },
+  "SEATED DB SHOULDER PRESS": {
+    part:"上肢推", muscles:"肩膀、三頭",
+    gear:"有靠背的椅子＋啞鈴",
+    steps:[
+      "坐好，背貼靠背，雙手各持啞鈴舉到肩膀高度，手心朝前",
+      "腹部收緊、肋骨往下收",
+      "把啞鈴推到頭頂正上方，手臂接近打直",
+      "慢慢放回肩膀高度"
+    ],
+    mistakes:[
+      "挺腰把胸口往前推 → 收緊腹部，貼緊靠背",
+      "啞鈴往前推 → 推到耳朵正上方，走垂直路線",
+      "憋氣 → 推時吐氣"
+    ],
+    easier:"減重量；一次推一手",
+    harder:"加重；改站姿；放下放慢"
+  },
+  "DUMBBELL FLY": {
+    part:"上肢推", muscles:"胸（伸展為主）",
+    gear:"臥推椅＋啞鈴",
+    steps:[
+      "躺在椅上，雙手各持啞鈴舉在胸口上方，手心相對",
+      "手肘保持微彎固定不變",
+      "雙手像抱大樹一樣往兩側慢慢打開，到感覺胸口被拉開",
+      "用胸部的力量把手臂帶回中間"
+    ],
+    mistakes:[
+      "手肘打直 → 微彎固定，不然肩膀和手肘壓力大",
+      "重量太重變成臥推 → 這動作用輕重量做感受，不是拚重量",
+      "下放太低 → 感覺拉開就停，不要過度伸展"
+    ],
+    easier:"減重量；範圍縮小",
+    harder:"小幅加重；下放放慢"
+  },
+  "TRICEPS PUSHDOWN": {
+    part:"上肢推", muscles:"三頭",
+    gear:"滑輪機（高位）",
+    steps:[
+      "站在滑輪機前，握住繩索或直桿，滑輪調到高位",
+      "手肘夾在身體兩側固定不動，上半身微微前傾",
+      "只彎手肘，把重量往下壓到手臂打直",
+      "頂點停 1 秒，慢慢回到起始位置"
+    ],
+    mistakes:[
+      "身體上下晃借力 → 上半身固定，只有手肘在動",
+      "手肘往前跑 → 手肘全程貼在身側當支點"
+    ],
+    easier:"減重量",
+    harder:"加重；底部停 2 秒"
+  },
+  "PULL-UP / LAT PULLDOWN": {
+    part:"上肢拉", muscles:"背部（闊背肌）、二頭",
+    gear:"單槓 或 滑輪下拉機",
+    steps:[
+      "握槓比肩膀稍寬，手心朝前",
+      "肩膀先往後往下沉（不要聳肩）",
+      "手肘往下往後拉，把胸口帶向槓（或把槓拉到鎖骨）",
+      "頂點停 1 秒感覺背部夾緊，再慢慢回到起始位置"
+    ],
+    mistakes:[
+      "只用手臂拉 → 先想「手肘往下」，背才會參與",
+      "身體大幅擺盪借力 → 做不到就改滑輪下拉，不要靠晃",
+      "槓拉到脖子後面 → 拉到身體前方鎖骨，肩膀才安全"
+    ],
+    easier:"改滑輪下拉；或用彈力帶輔助引體向上",
+    harder:"減少輔助、負重；下放放慢 3 秒"
+  },
+  "CHEST-SUPPORTED ROW": {
+    part:"上肢拉", muscles:"背部中段、二頭",
+    gear:"胸靠划船機",
+    setup:"椅墊調到胸口能靠住、雙手自然握到把手的高度。",
+    steps:[
+      "胸口貼住墊子，雙手握把手往前伸直",
+      "肩膀往後往下沉",
+      "手肘往後拉，把把手拉到身體兩側",
+      "頂點停 1 秒夾緊背部，慢慢放回"
+    ],
+    mistakes:[
+      "胸口離開墊子借力 → 全程貼住，這就是這台機器的重點",
+      "只用手臂 → 先想手肘往後，肩胛往中間夾"
+    ],
+    easier:"減重量",
+    harder:"加重；頂點停 2 秒"
+  },
+  "CABLE ROW": {
+    part:"上肢拉", muscles:"背部中段、二頭",
+    gear:"坐姿滑輪划船機",
+    steps:[
+      "坐好，雙腳踩住踏板，膝蓋微彎",
+      "上半身保持直立，雙手握把手往前伸",
+      "手肘往後拉，把把手拉到肚子位置",
+      "頂點停 1 秒，慢慢放回讓背部被拉開"
+    ],
+    mistakes:[
+      "身體前後大幅搖晃 → 上半身固定接近直立，只有手臂動",
+      "肩膀聳起 → 肩膀往後往下沉再開始拉"
+    ],
+    easier:"減重量",
+    harder:"加重；放回放慢"
+  },
+  "FACE PULL": {
+    part:"上肢拉", muscles:"上背、後三角（顧肩膀健康）",
+    gear:"滑輪機（高位）＋繩索",
+    steps:[
+      "滑輪調到臉部或略高的高度，雙手握繩索兩端",
+      "往後退一步，手臂伸直，手心相對",
+      "把繩索往臉的兩側拉，手肘往外往後打開",
+      "頂點時雙手在耳朵兩側，停 1 秒再慢慢放回"
+    ],
+    mistakes:[
+      "重量太重變成划船 → 這動作用輕重量做，重點是姿勢",
+      "手肘往下垂 → 手肘要抬到跟肩膀差不多高"
+    ],
+    easier:"減重量",
+    harder:"小幅加重；頂點停 2 秒"
+  },
+  "INCLINE DB CURL": {
+    part:"上肢拉", muscles:"二頭",
+    gear:"斜板椅＋啞鈴",
+    setup:"椅背調到約 45–60 度。",
+    steps:[
+      "坐在斜板椅上，背貼椅背，雙手各持啞鈴自然垂下",
+      "手臂在身體後方，這個角度讓二頭被拉得更長",
+      "手肘固定，只彎手肘把啞鈴彎舉起來",
+      "下放花 3 秒慢慢回到起始位置"
+    ],
+    mistakes:[
+      "手肘往前抬 → 手肘固定在原位當支點",
+      "下放太快 → 慢慢放才是重點"
+    ],
+    easier:"減重量；椅背調更直一點",
+    harder:"加重；下放放慢到 4 秒"
+  },
+  "FRONT RAISE": {
+    part:"上肢推", muscles:"三角肌前束",
+    gear:"啞鈴",
+    steps:[
+      "站直，雙手各持啞鈴垂在大腿前方",
+      "手臂接近打直（微彎），手肘固定",
+      "把啞鈴往前抬到肩膀高度",
+      "停 1 秒，慢慢放下"
+    ],
+    mistakes:[
+      "身體往後仰借力 → 重量放輕，或背靠牆做",
+      "抬超過肩膀很多 → 抬到肩膀高度就夠"
+    ],
+    easier:"減重量；一次抬一手",
+    harder:"加重；放下放慢"
+  },
+  "HANGING LEG RAISE": {
+    part:"核心", muscles:"腹部（下腹為主）",
+    gear:"單槓",
+    steps:[
+      "雙手握單槓懸吊，肩膀主動往下沉（不要完全鬆掉）",
+      "腹部收緊，膝蓋併攏",
+      "用腹部的力量把膝蓋抬到胸口高度（或以上）",
+      "慢慢放下，不要讓身體開始擺盪"
+    ],
+    mistakes:[
+      "身體前後盪 → 抬之前先穩住，範圍小一點也沒關係",
+      "只用髖部把腿抬起 → 想像把骨盆往肋骨方向捲，腹部才會參與",
+      "握不住 → 先練屈膝版，或改躺地上舉腿"
+    ],
+    easier:"屈膝抬膝；或躺在地上做舉腿",
+    harder:"腿伸直抬；動作放慢"
+  }
+};
+
+/* ============ 替代動作庫 ============
+   器材被占用或沒有時用。每個動作 3–4 種，刻意涵蓋不同器材
+   （槓鈴／啞鈴／滑輪／機械／徒手／彈力帶），不會一台沒了就全沒了。
+   n 名稱　g 需要的器材　h 做法重點　排序＝建議優先順序 */
+const ALT_LIB = {
+  "BACK SQUAT":[
+    {n:"高腳杯蹲",g:"啞鈴或壺鈴",h:"雙手抱在胸前，上身較直立、背壓力小。重量受限於手抱得住的大小，次數可拉到 10–12。"},
+    {n:"前蹲舉",g:"槓鈴＋深蹲架",h:"槓放在鎖骨前，手肘抬高。沒有後蹲的位置但有架子時用，重量約為背蹲的 70–80%。"},
+    {n:"哈克深蹲機／腿推",g:"機械",h:"背有支撐、不用架安全槓，專注練大腿前側。重量不要和背蹲直接比較。"},
+    {n:"保加利亞分腿蹲",g:"啞鈴＋椅子",h:"單腳訓練，用較輕的啞鈴就能練到很吃力；每邊各做完整次數。"}
+  ],
+  "ROMANIAN DEADLIFT":[
+    {n:"啞鈴羅馬尼亞硬舉",g:"啞鈴",h:"動作完全相同，只是握啞鈴；槓鈴被占用時最直接的替換。"},
+    {n:"單腳羅馬尼亞硬舉",g:"啞鈴或徒手",h:"一腳站穩、另一腳往後伸，輕重量就有效，同時練平衡；一手扶架子也可以。"},
+    {n:"挺身（背伸展）",g:"羅馬椅或平椅",h:"髖部彎曲上下，臀和腿後為主；重點在髖部動，不是腰在拱。"},
+    {n:"滑輪拉繩（Pull-through）",g:"滑輪機＋繩索",h:"背對滑輪、繩索從胯下穿過，用髖部把重量向前推；對腰壓力小。"}
+  ],
+  "LEG PRESS":[
+    {n:"哈克深蹲機",g:"機械",h:"背靠斜板蹲，和腿推一樣是有支撐的大腿前側訓練，更吃力。"},
+    {n:"高腳杯蹲（腳跟墊高）",g:"啞鈴＋小槓片",h:"腳跟墊 2–3 cm 讓膝蓋更往前，偏重大腿前側。"},
+    {n:"分腿蹲／反向弓箭步",g:"啞鈴",h:"單腳訓練，補足腿推的訓練量；每邊 8–10 下。"},
+    {n:"彈力帶腿推（躺姿）",g:"彈力帶",h:"躺著用腳踩帶子推到伸直，適合沒有任何機械時，負荷較小，次數做到 15 以上。"}
+  ],
+  "LEG CURL":[
+    {n:"北歐腿後彎舉",g:"固定腳踝的物件或夥伴",h:"跪姿慢慢往前倒再用手推回；難度高，先只做下放段。"},
+    {n:"滑板／毛巾腿後彎舉",g:"滑盤或地板＋毛巾",h:"躺姿臀橋後，腳跟滑出去再拉回；不用器械，滑順的地板就行。"},
+    {n:"啞鈴俯臥腿彎舉",g:"平椅＋啞鈴",h:"趴在椅上，雙腳夾住啞鈴往臀部彎；重量輕，每組做到 12–15。"},
+    {n:"滑輪站姿腿彎舉",g:"滑輪機＋腳踝帶",h:"腳踝繫帶站著單腳彎，扶著架子保持穩定。"},
+    {n:"羅馬尼亞硬舉／單腳硬舉",g:"槓鈴或啞鈴",h:"髖部主導的腿後訓練，這天已有 RDL 時可多做 1 組代替。"}
+  ],
+  "STANDING CALF RAISE":[
+    {n:"啞鈴單腳提踵",g:"啞鈴＋台階",h:"前腳掌踩在台階邊緣，單手持啞鈴、另一手扶牆；每邊做滿次數。"},
+    {n:"腿推機提踵",g:"腿推機",h:"坐姿用腳尖推踏板，膝蓋接近伸直；範圍要完整。"},
+    {n:"史密斯機提踵",g:"史密斯機＋槓片墊腳",h:"肩膀頂住槓，前腳掌踩槓片。"},
+    {n:"徒手雙腳／單腳提踵",g:"台階",h:"沒有任何器材時用，單腳做、頂端停 2 秒、次數拉到 15–20。"}
+  ],
+  "BARBELL BENCH PRESS":[
+    {n:"啞鈴臥推",g:"啞鈴＋平椅",h:"範圍更大，每手要穩住；重量約為槓鈴的 35–40%（每手）。"},
+    {n:"地板臥推",g:"槓鈴或啞鈴",h:"躺地上推，手肘碰地即停；沒有臥推架時最接近的替代，肩膀較舒服。"},
+    {n:"史密斯機臥推",g:"史密斯機＋平椅",h:"軌道固定，單人練也安全，注意要自己對好起始位置。"},
+    {n:"伏地挺身（可加負重）",g:"徒手，可加背包／槓片",h:"做到次數太多時背上負重；或把腳墊高。"},
+    {n:"彈力帶／滑輪胸推",g:"彈力帶或滑輪",h:"張力越推越大，適合收尾，不適合當主要力量動作。"}
+  ],
+  "CHEST-SUPPORTED ROW":[
+    {n:"斜板啞鈴划船（胸靠椅）",g:"斜板椅＋啞鈴",h:"趴在 30–45 度斜板上，雙手啞鈴划；與機械版同樣不傷腰。"},
+    {n:"坐姿滑輪划船",g:"滑輪機",h:"坐直、不要前後晃；握把用 V 把手或寬握。"},
+    {n:"T 槓／地雷管划船",g:"槓鈴＋角落或 T 槓架",h:"槓一端固定在角落，胸前傾划；重量可以加得較多，但要維持背平。"},
+    {n:"反向划船（懸吊）",g:"史密斯機的槓／TRX／吊環",h:"身體挺直，把胸口拉向槓；腳放低較容易，墊高腳更難。"}
+  ],
+  "MACHINE CHEST PRESS":[
+    {n:"啞鈴臥推或斜上啞鈴推",g:"啞鈴＋椅子",h:"最常見的替換，重量先用機器的一半抓，視感覺調整。"},
+    {n:"滑輪胸推／夾胸",g:"雙滑輪",h:"站姿雙手往前推，核心要穩；保持張力很高。"},
+    {n:"伏地挺身",g:"徒手",h:"做到有餘力就加背包重量。"},
+    {n:"史密斯機臥推",g:"史密斯機＋平椅",h:"軌道固定，感覺接近胸推機。"}
+  ],
+  "SEATED DB SHOULDER PRESS":[
+    {n:"站姿啞鈴肩推",g:"啞鈴",h:"沒有靠背椅時直接站著做，核心和臀要夾緊，重量約降 10%。"},
+    {n:"肩推機",g:"肩推機",h:"軌道固定、最穩，可以用較大的重量。"},
+    {n:"地雷管單手肩推",g:"槓鈴＋角落",h:"斜向推，對肩膀較友善，適合肩膀頂部不舒服時。"},
+    {n:"阿諾推舉",g:"啞鈴＋椅子",h:"推的同時轉掌，重量要比一般肩推輕。"},
+    {n:"滑輪肩推",g:"滑輪機＋矮椅",h:"張力穩定，單手做也可以。"}
+  ],
+  "DUMBBELL FLY":[
+    {n:"滑輪夾胸（低到高或高到低）",g:"雙滑輪",h:"張力全程不斷，比啞鈴飛鳥更連續；用輕重量。"},
+    {n:"蝴蝶機夾胸",g:"蝴蝶機",h:"軌道固定，最容易感受到胸部。"},
+    {n:"彈力帶夾胸",g:"彈力帶",h:"綁在架子上站姿夾，沒有任何器材時使用。"},
+    {n:"斜上啞鈴飛鳥",g:"斜板椅＋啞鈴",h:"改變角度偏上胸，重量更輕。"}
+  ],
+  "TRICEPS PUSHDOWN":[
+    {n:"彈力帶下壓",g:"彈力帶＋高處固定點",h:"和滑輪版動作一樣，手肘夾緊；調整帶子粗細控制重量。"},
+    {n:"啞鈴過頭三頭伸展",g:"啞鈴",h:"單顆啞鈴雙手握，過頭彎曲再伸直；大重量時小心頭部。"},
+    {n:"仰臥三頭伸展（Skull crusher）",g:"平椅＋啞鈴或 EZ 槓",h:"手肘固定、只彎手肘；肘不舒服時改啞鈴對握。"},
+    {n:"窄距伏地挺身／椅子撐體",g:"徒手或椅子",h:"手與肩同寬或更窄，手肘貼身體；椅子撐體肩不舒服就不要做。"}
+  ],
+  "TRAP-BAR DEADLIFT":[
+    {n:"啞鈴硬舉",g:"啞鈴",h:"兩手各一顆垂在身側，動作與六角槓幾乎相同，上限受啞鈴重量影響。"},
+    {n:"槓鈴硬舉（相撲或傳統）",g:"槓鈴",h:"換成直槓，背要更直、動作更要練；先用較輕重量。"},
+    {n:"羅馬尼亞硬舉",g:"槓鈴或啞鈴",h:"髖部主導，重量要降一些，每下都要控制。"},
+    {n:"壺鈴擺盪",g:"壺鈴",h:"爆發型髖部動作，兩手抓壺鈴擺到胸口高，重點在臀夾緊。"},
+    {n:"槓鈴墊高硬舉",g:"槓鈴＋箱子或槓片墊",h:"把槓墊到小腿中段開始，減少腰部壓力。"}
+  ],
+  "BULGARIAN SPLIT SQUAT":[
+    {n:"分腿蹲（後腳不墊高）",g:"啞鈴",h:"兩腳都踩地，容易控制，沒有椅子或椅子被占用時直接使用。"},
+    {n:"反向弓箭步",g:"啞鈴",h:"往後退一步蹲下，對膝蓋友善。"},
+    {n:"史密斯機分腿蹲",g:"史密斯機",h:"軌道固定，不用管平衡。"},
+    {n:"階梯登階",g:"箱子＋啞鈴",h:"踩高處往上站，單腳出力，膝蓋對準腳尖。"}
+  ],
+  "HIP THRUST":[
+    {n:"臀橋（地板或槓鈴）",g:"槓鈴或啞鈴",h:"躺地上做，範圍較短；每組次數拉到 12–15、頂端夾 2 秒。"},
+    {n:"滑輪拉繩（Pull-through）",g:"滑輪機＋繩索",h:"對臀的刺激與髖推相近，腰壓力小。"},
+    {n:"啞鈴／壺鈴髖推",g:"啞鈴＋平椅",h:"把啞鈴放在髖部上，沒有槓鈴或護墊時使用。"},
+    {n:"羅馬尼亞硬舉／單腳硬舉",g:"啞鈴或槓鈴",h:"髖部伸展訓練，但臀的頂點收縮較少。"},
+    {n:"臀推機",g:"臀推機",h:"部分健身房有，操作更方便。"}
+  ],
+  "LEG EXTENSION":[
+    {n:"滑輪腿伸展（坐姿）",g:"滑輪機＋腳踝帶",h:"坐著把腿往前伸直，控制好重量。"},
+    {n:"彈力帶腿伸展",g:"彈力帶",h:"綁在固定點、坐著伸直；重量輕，次數拉到 15–20。"},
+    {n:"分腿蹲／保加利亞分腿蹲",g:"啞鈴",h:"大腿前側很吃力，一次做完所有次數。"},
+    {n:"哈克深蹲機／高腳杯蹲（腳跟墊高）",g:"機械或啞鈴",h:"膝蓋往前走，偏重股四頭。"}
+  ],
+  "SEATED CALF RAISE":[
+    {n:"啞鈴坐姿提踵",g:"平椅＋啞鈴",h:"啞鈴放在膝上，前腳掌墊在小槓片上；改用膝蓋彎的姿勢。"},
+    {n:"槓鈴坐姿提踵",g:"槓鈴＋椅子",h:"槓放大腿上用毛巾墊著。"},
+    {n:"腿推機提踵",g:"腿推機",h:"膝蓋可略彎，主要練小腿。"},
+    {n:"站姿提踵（彎膝）",g:"徒手或啞鈴",h:"膝蓋微彎站著做，比目魚肌參與較多。"}
+  ],
+  "PULL-UP / LAT PULLDOWN":[
+    {n:"彈力帶輔助引體向上",g:"單槓＋彈力帶",h:"帶子套在槓上、膝蓋踩進去輔助，次數做到 6–10。"},
+    {n:"輔助引體向上機",g:"輔助引體機",h:"重量越大越輕鬆，逐週減少輔助。"},
+    {n:"單手滑輪下拉",g:"滑輪機＋單手把",h:"沒有下拉機但有滑輪時，把手調高往下拉。"},
+    {n:"彈力帶下拉",g:"彈力帶＋高處",h:"跪姿把帶子往下拉，負荷較小，次數拉到 12–15。"},
+    {n:"啞鈴／槓鈴仰臥拉舉（Pullover）",g:"啞鈴",h:"躺在椅上雙手握啞鈴從頭上拉到胸前，練闊背，不是完整替代。"}
+  ],
+  "STANDING OHP":[
+    {n:"啞鈴站姿肩推",g:"啞鈴",h:"不需要架子，重量約槓鈴的 35–40%（每手）。"},
+    {n:"坐姿啞鈴肩推／肩推機",g:"椅子＋啞鈴或機械",h:"背有支撐、腰壓力小。"},
+    {n:"地雷管肩推",g:"槓鈴＋角落",h:"單手或雙手斜向上推，肩膀友善。"},
+    {n:"斜上槓鈴／啞鈴臥推",g:"斜板椅＋槓鈴或啞鈴",h:"肩膀活動度不足時使用，角度約 30–45 度。"}
+  ],
+  "CABLE ROW":[
+    {n:"胸靠划船機",g:"機械",h:"同樣是胸有支撐的划船，被占用時可互相替換。"},
+    {n:"啞鈴單手划船（扶椅）",g:"啞鈴＋平椅",h:"一手扶椅、另一手拉，不靠身體晃。"},
+    {n:"T 槓／地雷管划船",g:"槓鈴＋角落",h:"重量可以加較多，背部維持平直。"},
+    {n:"彈力帶坐姿划船",g:"彈力帶",h:"雙腳套帶、坐著拉；負荷較小，次數拉到 15 以上。"},
+    {n:"反向划船",g:"史密斯機的槓／TRX",h:"身體傾斜拉，難度可調整腳位置。"}
+  ],
+  "FACE PULL":[
+    {n:"彈力帶拉開（Pull-apart）",g:"彈力帶",h:"雙手握帶往兩側拉開到胸前，隨處可做。"},
+    {n:"啞鈴反向飛鳥（俯身或斜板）",g:"啞鈴＋斜板椅",h:"趴在斜板上最穩，重量很輕就夠。"},
+    {n:"反向蝴蝶機（後三角機）",g:"蝴蝶機",h:"面向椅背，手臂往後打開。"},
+    {n:"滑輪後三角划船／單手滑輪飛鳥",g:"滑輪機",h:"手肘抬高划向身後；用輕重量。"}
+  ],
+  "INCLINE DB CURL":[
+    {n:"站姿啞鈴彎舉",g:"啞鈴",h:"沒有斜板時用；手肘不要往前，下放放慢。"},
+    {n:"滑輪彎舉",g:"滑輪機＋直桿或繩索",h:"張力不間斷，單手也可以。"},
+    {n:"坐姿集中彎舉",g:"啞鈴＋椅子",h:"手肘頂在大腿內側，減少借力。"},
+    {n:"EZ 槓／槓鈴彎舉",g:"槓鈴或 EZ 槓",h:"重量可以加較多，要控制身體不晃。"}
+  ],
+  "FRONT RAISE":[
+    {n:"滑輪前平舉",g:"滑輪機",h:"背對滑輪、手往前抬，張力穩定。"},
+    {n:"槓片前平舉",g:"槓片",h:"雙手握槓片兩側，從大腿前抬到肩膀。"},
+    {n:"彈力帶前平舉",g:"彈力帶",h:"踩住帶子往前抬。"},
+    {n:"啞鈴側平舉／肩推多做",g:"啞鈴",h:"這天已有肩推時，前三角肌已經練到，可以改練側三角。"}
+  ],
+  "HANGING LEG RAISE":[
+    {n:"羅馬椅（Captain's chair）舉腿",g:"羅馬椅／撐體架",h:"手臂撐住身體，免握力；動作與懸吊舉腿相同。"},
+    {n:"仰臥舉腿",g:"墊子／地板",h:"躺平、腰貼地，腿慢慢放下不要碰地。"},
+    {n:"滑輪捲腹（跪姿）",g:"滑輪機＋繩索",h:"跪著把身體往下捲，可以加重量。"},
+    {n:"反向捲腹／下斜板舉腿",g:"下斜板或平地",h:"把骨盆捲起來，下腹較容易感受到。"}
+  ]
+};
+
+/* 替代動作的處方：[組數, 次數, RIR, 休息]，null＝沿用原動作。
+   單腳動作的次數是「每邊」，徒手／彈力帶動作次數拉高。 */
+const ALT_RX = {
+  "BACK SQUAT|高腳杯蹲":[4,"8–12","2","2 min"],
+  "BACK SQUAT|哈克深蹲機／腿推":[3,"8–12","1","2 min"],
+  "BACK SQUAT|保加利亞分腿蹲":[3,"8–10 /邊","2","2 min"],
+  "ROMANIAN DEADLIFT|單腳羅馬尼亞硬舉":[3,"8–10 /邊","2","90 sec"],
+  "ROMANIAN DEADLIFT|挺身（背伸展）":[3,"10–15","1","90 sec"],
+  "ROMANIAN DEADLIFT|滑輪拉繩（Pull-through）":[3,"10–15","1","90 sec"],
+  "LEG PRESS|哈克深蹲機":[2,"8–12","1",null],
+  "LEG PRESS|高腳杯蹲（腳跟墊高）":[3,"10–12","1",null],
+  "LEG PRESS|分腿蹲／反向弓箭步":[2,"8–10 /邊","1",null],
+  "LEG PRESS|彈力帶腿推（躺姿）":[3,"15–20","1","90 sec"],
+  "LEG CURL|北歐腿後彎舉":[2,"5–8","1","2 min"],
+  "LEG CURL|滑板／毛巾腿後彎舉":[2,"8–12","1",null],
+  "LEG CURL|啞鈴俯臥腿彎舉":[2,"12–15","1",null],
+  "LEG CURL|滑輪站姿腿彎舉":[2,"10–12 /邊","1",null],
+  "LEG CURL|羅馬尼亞硬舉／單腳硬舉":[2,"8–10","2","2 min"],
+  "STANDING CALF RAISE|啞鈴單腳提踵":[3,"10–12 /邊",null,null],
+  "STANDING CALF RAISE|腿推機提踵":[3,"12–15",null,null],
+  "STANDING CALF RAISE|徒手雙腳／單腳提踵":[3,"15–20 /邊",null,null],
+  "BARBELL BENCH PRESS|啞鈴臥推":[4,"6–8","2",null],
+  "BARBELL BENCH PRESS|地板臥推":[4,"5","2",null],
+  "BARBELL BENCH PRESS|史密斯機臥推":[4,"5","2",null],
+  "BARBELL BENCH PRESS|伏地挺身（可加負重）":[4,"8–15","2","2 min"],
+  "BARBELL BENCH PRESS|彈力帶／滑輪胸推":[3,"12–15","1","90 sec"],
+  "CHEST-SUPPORTED ROW|T 槓／地雷管划船":[3,"8–12",null,null],
+  "CHEST-SUPPORTED ROW|反向划船（懸吊）":[3,"8–12",null,null],
+  "MACHINE CHEST PRESS|滑輪胸推／夾胸":[2,"10–15",null,null],
+  "MACHINE CHEST PRESS|伏地挺身":[2,"10–15",null,null],
+  "SEATED DB SHOULDER PRESS|地雷管單手肩推":[2,"8–12 /邊",null,null],
+  "SEATED DB SHOULDER PRESS|滑輪肩推":[2,"10–12",null,null],
+  "DUMBBELL FLY|彈力帶夾胸":[2,"15–20",null,null],
+  "TRICEPS PUSHDOWN|彈力帶下壓":[2,"15–20",null,null],
+  "TRICEPS PUSHDOWN|仰臥三頭伸展（Skull crusher）":[2,"10–12",null,null],
+  "TRICEPS PUSHDOWN|窄距伏地挺身／椅子撐體":[2,"8–15",null,null],
+  "TRAP-BAR DEADLIFT|啞鈴硬舉":[3,"6–10","2",null],
+  "TRAP-BAR DEADLIFT|羅馬尼亞硬舉":[3,"8–10","2","2 min"],
+  "TRAP-BAR DEADLIFT|壺鈴擺盪":[3,"12–15","1","90 sec"],
+  "BULGARIAN SPLIT SQUAT|階梯登階":[3,"8–10 /邊",null,null],
+  "HIP THRUST|臀橋（地板或槓鈴）":[3,"12–15","1","90 sec"],
+  "HIP THRUST|滑輪拉繩（Pull-through）":[2,"12–15",null,null],
+  "HIP THRUST|羅馬尼亞硬舉／單腳硬舉":[2,"8–10","2",null],
+  "LEG EXTENSION|彈力帶腿伸展":[3,"15–20",null,null],
+  "LEG EXTENSION|分腿蹲／保加利亞分腿蹲":[2,"8–10 /邊","1","2 min"],
+  "LEG EXTENSION|哈克深蹲機／高腳杯蹲（腳跟墊高）":[2,"10–12",null,null],
+  "PULL-UP / LAT PULLDOWN|單手滑輪下拉":[4,"8–12 /邊","2","2 min"],
+  "PULL-UP / LAT PULLDOWN|彈力帶下拉":[3,"12–15","1","90 sec"],
+  "PULL-UP / LAT PULLDOWN|啞鈴／槓鈴仰臥拉舉（Pullover）":[3,"10–12","1","2 min"],
+  "STANDING OHP|地雷管肩推":[3,"8–10 /邊",null,null],
+  "CABLE ROW|啞鈴單手划船（扶椅）":[2,"10–12 /邊",null,null],
+  "CABLE ROW|彈力帶坐姿划船":[2,"15–20",null,null],
+  "CABLE ROW|反向划船":[2,"8–12",null,null],
+  "FACE PULL|彈力帶拉開（Pull-apart）":[2,"15–20",null,null],
+  "FACE PULL|啞鈴反向飛鳥（俯身或斜板）":[2,"12–15",null,null],
+  "FACE PULL|反向蝴蝶機（後三角機）":[2,"12–15",null,null],
+  "FACE PULL|滑輪後三角划船／單手滑輪飛鳥":[2,"12–15",null,null],
+  "INCLINE DB CURL|坐姿集中彎舉":[2,"10–12 /邊",null,null],
+  "FRONT RAISE|彈力帶前平舉":[2,"15–20",null,null],
+  "FRONT RAISE|啞鈴側平舉／肩推多做":[2,"12–15",null,null],
+  "HANGING LEG RAISE|仰臥舉腿":[2,"12–15",null,null],
+  "HANGING LEG RAISE|滑輪捲腹（跪姿）":[2,"12–15",null,null],
+  "HANGING LEG RAISE|反向捲腹／下斜板舉腿":[2,"12–15",null,null]
+};
+
+/* 取「實際要做的動作」：有換就回傳替代動作（名稱、組數、次數、RIR、休息都換），否則原動作。
+   替代動作用自己的名字記重量，所以重量進度不會和原動作混在一起。
+   大重量動作的替代一律當一般動作，不套用 +5／+2.5 kg 的自動加重規則。 */
+function exAt(dayKey, i, swaps){
+  const base = DAYS[dayKey].exercises[i];
+  const ai = swaps ? swaps[i] : null;
+  if(ai===null || ai===undefined) return base;
+  const a = (ALT_LIB[base.en]||[])[ai];
+  if(!a) return base;
+  const rx = ALT_RX[base.en+"|"+a.n] || [];
+  const pick = (v,d)=> (v===null||v===undefined) ? d : v;
+  return {
+    name:a.n, en:null,
+    sets:pick(rx[0],base.sets), reps:pick(rx[1],base.reps),
+    rir:pick(rx[2],base.rir), rest:pick(rx[3],base.rest),
+    load:"試重", cat: base.cat==="OTHER_DB" ? "OTHER_DB" : "OTHER",
+    note:"替代 "+base.name+"｜需要："+a.g+"。"+a.h+(/^徒手/.test(a.g)?" 徒手動作的重量欄請填 0。":""),
+    swapOf:base.name
+  };
+}
+function blankSets(n){ return Array.from({length:n}, ()=>({weight:"",reps:"",rir:"",done:false})); }
+
+const THEME_LIGHT_BAR = "#0D0F11";
+
+/* 課表 → 動作庫索引的來源（各 app 課表結構不同，這裡轉成統一格式） */
+function EX_SOURCE(){
+  const out = [];
+  Object.entries(DAYS).forEach(([k,d])=>{
+    (d.exercises||[]).forEach(x=>{
+      if(x && x.en) out.push({en:x.en, name:x.name, where:"DAY "+k+" · "+d.name});
+    });
+  });
+  return out;
+}
+
+/* ============================================================
+   動作示意圖
+   姿勢用「關節座標」描述，圖形由 figSVG() 畫出來，所以 40 幾個動作
+   不用各畫一張圖，只要給起始／結束兩組座標。
+   顏色全部用 currentColor / CSS 變數 → 深色淺色主題自動跟著變。
+   座標系：viewBox 0 0 200 200，地面 y=178，人物面向右。
+   ============================================================ */
+const FIG_GROUND = 178;
+
+/* 關節縮寫：
+   hdc 頭中心 / nk 頸 / sh 肩 / el 肘 / wr 腕 / hp 髖 / kn 膝 / an 踝 / to 腳尖
+   far* = 另一側手腳（畫淺一點，做出立體感） */
+function figSVG(p, opts){
+  opts = opts || {};
+  const L = (a,b,w,cls) => (!a||!b) ? "" :
+    `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" class="${cls||'fl'}" stroke-width="${w||5}"/>`;
+  let g = "";
+
+  // 地面
+  if(opts.ground !== false){
+    g += `<line x1="8" y1="${FIG_GROUND}" x2="192" y2="${FIG_GROUND}" class="fg" stroke-width="2"/>`;
+  }
+  // 器材（畫在人物後面）
+  if(opts.propsBack) g += opts.propsBack;
+
+  // 遠側手腳：先畫，顏色淡
+  g += L(p.hp, p.farKn, 5, 'fl dim');
+  g += L(p.farKn, p.farAn, 5, 'fl dim');
+  g += L(p.farAn, p.farTo, 4, 'fl dim');
+  g += L(p.sh, p.farEl, 4.5, 'fl dim');
+  g += L(p.farEl, p.farWr, 4.5, 'fl dim');
+
+  // 軀幹、近側四肢
+  g += L(p.nk, p.hp, 6.5);
+  g += L(p.hp, p.kn, 5.5);
+  g += L(p.kn, p.an, 5.5);
+  g += L(p.an, p.to, 4.5);
+  g += L(p.sh, p.el, 5);
+  g += L(p.el, p.wr, 5);
+
+  // 頭
+  // 頭是實心（填卡片底色）：讓從頭後方經過的手臂被遮住，讀起來才像「手在頭後面」，
+  // 而不是一條線直接穿過臉。
+  if(p.hdc) g += `<circle cx="${p.hdc[0]}" cy="${p.hdc[1]}" r="${p.hdr||10}" class="fh" stroke-width="4.5"/>`;
+
+  // 器材（畫在人物前面）
+  if(opts.propsFront) g += opts.propsFront;
+  // 箭頭／標註
+  if(opts.marks) g += opts.marks;
+  return g;
+}
+
+/* ---------- 器材 ---------- */
+// 啞鈴：橫桿＋兩端方塊。ang 是旋轉角度（度）
+function dumbbell(x,y,ang,s){
+  s = s || 1; ang = ang || 0;
+  const w = 9*s, h = 7*s, gap = 5*s;
+  return `<g transform="translate(${x},${y}) rotate(${ang})" class="fp">
+    <rect x="${-gap}" y="${-1.6*s}" width="${gap*2}" height="${3.2*s}" rx="1"/>
+    <rect x="${-gap-w/2}" y="${-h/2}" width="${w/2}" height="${h}" rx="1.5"/>
+    <rect x="${gap}" y="${-h/2}" width="${w/2}" height="${h}" rx="1.5"/>
+  </g>`;
+}
+// 槓鈴：長桿＋兩端槓片
+function barbell(x,y,ang,half){
+  half = half || 34;
+  return `<g transform="translate(${x},${y}) rotate(${ang||0})" class="fp">
+    <rect x="${-half}" y="-1.8" width="${half*2}" height="3.6" rx="1.5"/>
+    <rect x="${-half-2}" y="-9" width="5" height="18" rx="2"/>
+    <rect x="${half-3}" y="-9" width="5" height="18" rx="2"/>
+  </g>`;
+}
+// 椅子／臥推椅（側視）
+function bench(x,y,w,h){
+  w=w||54; h=h||9;
+  return `<g class="fp2">
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2"/>
+    <rect x="${x+4}" y="${y+h}" width="4" height="${FIG_GROUND-y-h}"/>
+    <rect x="${x+w-8}" y="${y+h}" width="4" height="${FIG_GROUND-y-h}"/>
+  </g>`;
+}
+// 有靠背的椅子（側視，靠背在左）
+function chairBack(x,y){
+  return `<g class="fp2">
+    <rect x="${x}" y="${y}" width="46" height="8" rx="2"/>
+    <rect x="${x}" y="${y-38}" width="8" height="40" rx="2"/>
+    <rect x="${x+4}" y="${y+8}" width="4" height="${FIG_GROUND-y-8}"/>
+    <rect x="${x+38}" y="${y+8}" width="4" height="${FIG_GROUND-y-8}"/>
+  </g>`;
+}
+// 牆／垂直面
+function wall(x){
+  return `<rect x="${x}" y="20" width="6" height="${FIG_GROUND-20}" rx="2" class="fp2"/>`;
+}
+// 單槓／高位滑輪橫桿
+function highBar(y,x1,x2){
+  return `<g class="fp2"><rect x="${x1||40}" y="${y}" width="${(x2||160)-(x1||40)}" height="4" rx="2"/></g>`;
+}
+// 纜繩
+function cable(a,b){
+  return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" class="fc" stroke-width="2"/>`;
+}
+// 機器立柱（右側）
+function machine(x){
+  return `<g class="fp2"><rect x="${x}" y="30" width="8" height="${FIG_GROUND-30}" rx="2"/></g>`;
+}
+// 箭頭：標示動作方向
+function arrow(x1,y1,x2,y2){
+  const ang = Math.atan2(y2-y1, x2-x1)*180/Math.PI;
+  return `<g class="fa">
+    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-width="2.2" stroke-dasharray="5 4"/>
+    <g transform="translate(${x2},${y2}) rotate(${ang})">
+      <path d="M0 0 L-7 -4 L-7 4 Z"/>
+    </g>
+  </g>`;
+}
+
+/* 姿勢座標。面向右，地面 y=178。人物高約 154px。
+   手臂一律往身體前方偏移 6–10px，否則側視圖會被軀幹蓋住看不見。 */
+const P = {};
+
+/* ---------- 站姿基準 ---------- */
+P.STAND = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[108,76], wr:[112,102],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[88,76], farWr:[86,102], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}};
+
+/* ---------- 深蹲 ---------- */
+P.SQUAT_TOP = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[109,74], wr:[113,98],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[88,74], farWr:[86,98], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}};
+P.SQUAT_BOTTOM = { p:{
+  hdc:[110,58], nk:[106,72], sh:[106,74], el:[112,94], wr:[112,114],
+  hp:[78,116], kn:[114,136], an:[96,172], to:[118,176],
+  farEl:[102,94], farWr:[103,114], farKn:[108,138], farAn:[90,172], farTo:[112,176]
+}};
+
+/* ---------- 髖屈：硬舉 / RDL ---------- */
+P.HINGE_BOTTOM = { p:{
+  hdc:[134,68], nk:[122,76], sh:[122,78], el:[121,102], wr:[120,126],
+  hp:[80,98], kn:[86,134], an:[94,172], to:[114,176],
+  farEl:[116,102], farWr:[115,126], farKn:[80,134], farAn:[88,172], farTo:[108,176]
+}};
+
+/* ---------- 弓箭步 ---------- */
+P.LUNGE_BOTTOM = { p:{
+  hdc:[98,42], nk:[98,56], sh:[98,58], el:[110,84], wr:[114,110],
+  hp:[98,104], kn:[118,140], an:[120,174], to:[138,177],
+  farKn:[72,148], farAn:[60,174], farTo:[74,177],
+  farEl:[88,84], farWr:[86,110]
+}};
+
+/* ---------- 保加利亞分腿蹲 ---------- */
+P.BSS = { p:{
+  hdc:[92,40], nk:[92,54], sh:[92,56], el:[105,82], wr:[109,108],
+  hp:[92,102], kn:[112,140], an:[114,174], to:[132,177],
+  farKn:[64,130], farAn:[46,120], farTo:[38,114],
+  farEl:[84,82], farWr:[82,108]
+}, propsBack: bench(24,110,44,8) };
+
+/* ---------- 臀橋 / 臀推 ---------- */
+P.BRIDGE_DOWN = { p:{
+  hdc:[44,150], nk:[58,156], sh:[58,156], el:[76,164], wr:[94,168],
+  hp:[114,156], kn:[146,132], an:[150,174], to:[166,177]
+}};
+P.BRIDGE_UP = { p:{
+  hdc:[44,150], nk:[58,152], sh:[58,152], el:[76,158], wr:[94,162],
+  hp:[116,126], kn:[148,130], an:[150,174], to:[166,177]
+}, marks: arrow(116,150,116,120) };
+P.THRUST = { p:{
+  hdc:[42,104], nk:[58,112], sh:[58,112], el:[80,120], wr:[100,126],
+  hp:[116,120], kn:[148,124], an:[150,174], to:[166,177]
+}, propsBack: bench(18,112,48,9), propsFront: barbell(116,118,0,26) };
+
+/* ---------- 提踵 ---------- */
+P.CALF_DOWN = { p:{
+  hdc:[96,46], nk:[96,60], sh:[96,62], el:[108,88], wr:[112,114],
+  hp:[96,108], kn:[96,142], an:[96,170], to:[118,158],
+  farEl:[88,88], farWr:[86,114]
+}, propsBack:'<rect x="106" y="156" width="60" height="8" rx="2" class="fp2"/>', ground:false,
+   marks: arrow(134,150,134,126) };
+P.CALF_UP = { p:{
+  hdc:[96,28], nk:[96,42], sh:[96,44], el:[108,70], wr:[112,96],
+  hp:[96,90], kn:[96,124], an:[96,148], to:[120,156],
+  farEl:[88,70], farWr:[86,96]
+}, propsBack:'<rect x="106" y="156" width="60" height="8" rx="2" class="fp2"/>', ground:false };
+
+/* ---------- 伏地挺身 / 棒式 ---------- */
+P.PUSHUP_TOP = { p:{
+  hdc:[40,104], nk:[54,110], sh:[56,112], el:[58,142], wr:[58,172],
+  hp:[110,130], kn:[142,148], an:[168,168], to:[174,176]
+}};
+P.PUSHUP_BOTTOM = { p:{
+  hdc:[38,136], nk:[52,142], sh:[54,144], el:[74,164], wr:[56,172],
+  hp:[108,156], kn:[140,166], an:[166,174], to:[172,177]
+}, marks: arrow(88,132,88,154) };
+P.PLANK = { p:{
+  hdc:[40,122], nk:[54,128], sh:[56,130], el:[58,158], wr:[42,172],
+  hp:[110,148], kn:[142,160], an:[168,172], to:[174,177]
+}};
+P.SIDE_PLANK = { p:{
+  hdc:[40,112], nk:[54,120], sh:[56,122], el:[56,150], wr:[54,174],
+  hp:[112,148], kn:[142,162], an:[170,174], to:[176,170],
+  farEl:[62,96], farWr:[66,74]
+}};
+P.DEADBUG = { p:{
+  hdc:[38,150], nk:[54,154], sh:[56,154], el:[58,126], wr:[60,102],
+  hp:[112,158], kn:[124,124], an:[148,116], to:[164,114],
+  farEl:[76,134], farWr:[96,124], farKn:[146,152], farAn:[172,160], farTo:[180,166]
+}};
+
+/* ---------- 臥推 ---------- */
+P.BENCH_TOP = { p:{
+  hdc:[44,104], nk:[60,110], sh:[64,112], el:[66,88], wr:[68,64],
+  hp:[112,116], kn:[136,142], an:[140,174], to:[156,177]
+}, propsBack: bench(28,110,66,9), propsFront: barbell(68,62,0,30) };
+P.BENCH_BOTTOM = { p:{
+  hdc:[44,104], nk:[60,110], sh:[64,112], el:[84,94], wr:[68,100],
+  hp:[112,116], kn:[136,142], an:[140,174], to:[156,177]
+}, propsBack: bench(28,110,66,9), propsFront: barbell(68,98,0,30),
+   marks: arrow(100,70,100,94) };
+
+/* ---------- 肩推 ---------- */
+P.PRESS_START = { p:{
+  hdc:[96,40], nk:[96,54], sh:[96,56], el:[116,68], wr:[114,40],
+  hp:[96,100], kn:[96,136], an:[96,172], to:[116,176],
+  farEl:[78,68], farWr:[80,40], farKn:[90,136], farAn:[90,172], farTo:[110,176]
+}};
+P.PRESS_END = { p:{
+  hdc:[96,48], nk:[96,62], sh:[96,64], el:[100,44], wr:[102,22],
+  hp:[96,104], kn:[96,138], an:[96,172], to:[116,176],
+  farEl:[92,44], farWr:[90,22], farKn:[90,138], farAn:[90,172], farTo:[110,176]
+}, marks: arrow(126,50,126,24) };
+
+/* ---------- 俯身划船 ---------- */
+P.ROW_START = { p:{
+  hdc:[136,74], nk:[122,82], sh:[122,84], el:[122,110], wr:[122,136],
+  hp:[80,102], kn:[84,136], an:[92,172], to:[112,176],
+  farEl:[117,110], farWr:[117,136], farKn:[78,136], farAn:[86,172], farTo:[106,176]
+}};
+P.ROW_END = { p:{
+  hdc:[136,74], nk:[122,82], sh:[122,84], el:[98,104], wr:[114,110],
+  hp:[80,102], kn:[84,136], an:[92,172], to:[112,176],
+  farEl:[94,104], farWr:[110,110], farKn:[78,136], farAn:[86,172], farTo:[106,176]
+}, marks: arrow(128,132,110,112) };
+
+/* ---------- 單手划船（撐椅）---------- */
+P.DBROW_DOWN = { p:{
+  hdc:[152,78], nk:[138,86], sh:[138,88], el:[136,114], wr:[134,140],
+  hp:[92,102], kn:[92,138], an:[92,174], to:[112,177],
+  farEl:[118,92], farWr:[100,100]
+}, propsBack: bench(76,98,46,8) };
+P.DBROW_UP = { p:{
+  hdc:[152,78], nk:[138,86], sh:[138,88], el:[116,106], wr:[132,112],
+  hp:[92,102], kn:[92,138], an:[92,174], to:[112,177],
+  farEl:[118,92], farWr:[100,100]
+}, propsBack: bench(76,98,46,8), marks: arrow(148,136,130,114) };
+
+/* ---------- 彎舉 ---------- */
+P.CURL_DOWN = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[108,80], wr:[112,108],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[88,80], farWr:[86,108], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}};
+P.CURL_UP = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[102,80], wr:[116,60],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[90,80], farWr:[104,58], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}, marks: arrow(130,102,130,66) };
+
+/* ---------- 下拉 / 引體向上 ---------- */
+P.PULL_DOWN = { p:{
+  hdc:[96,62], nk:[96,76], sh:[96,78], el:[110,54], wr:[112,32],
+  hp:[96,122], kn:[104,158], an:[92,174], to:[110,177],
+  farEl:[82,54], farWr:[80,32]
+}, propsBack: highBar(28,58,138) };
+P.PULL_UP = { p:{
+  hdc:[96,46], nk:[96,60], sh:[96,62], el:[116,50], wr:[112,32],
+  hp:[96,106], kn:[104,142], an:[92,160], to:[110,164],
+  farEl:[76,50], farWr:[80,32]
+}, propsBack: highBar(28,58,138), marks: arrow(134,74,134,52) };
+
+/* ---------- 懸吊舉腿 ---------- */
+P.HANG_DOWN = { p:{
+  hdc:[96,60], nk:[96,74], sh:[96,76], el:[110,52], wr:[112,32],
+  hp:[96,120], kn:[96,152], an:[96,178], to:[112,180],
+  farEl:[82,52], farWr:[80,32]
+}, propsBack: highBar(28,62,134), ground:false };
+P.HANG_UP = { p:{
+  hdc:[96,60], nk:[96,74], sh:[96,76], el:[110,52], wr:[112,32],
+  hp:[96,120], kn:[124,104], an:[142,124], to:[152,134],
+  farEl:[82,52], farWr:[80,32]
+}, propsBack: highBar(28,62,134), ground:false, marks: arrow(136,158,138,126) };
+
+/* ---------- 三頭下壓 / 臉拉 ---------- */
+P.PUSHDOWN_START = { p:{
+  hdc:[86,38], nk:[88,52], sh:[88,54], el:[94,80], wr:[102,62],
+  hp:[88,98], kn:[88,136], an:[88,172], to:[108,176],
+  farEl:[84,80], farWr:[92,60]
+}, propsBack: machine(170) + cable([174,44],[102,62]) };
+P.PUSHDOWN_END = { p:{
+  hdc:[86,38], nk:[88,52], sh:[88,54], el:[94,80], wr:[98,106],
+  hp:[88,98], kn:[88,136], an:[88,172], to:[108,176],
+  farEl:[84,80], farWr:[90,104]
+}, propsBack: machine(170) + cable([174,44],[98,106]), marks: arrow(122,70,122,104) };
+P.FACEPULL_START = { p:{
+  hdc:[86,40], nk:[88,54], sh:[88,56], el:[112,56], wr:[134,54],
+  hp:[88,100], kn:[88,136], an:[88,172], to:[108,176],
+  farEl:[110,62], farWr:[132,60]
+}, propsBack: machine(170) + cable([174,44],[134,54]) };
+P.FACEPULL_END = { p:{
+  hdc:[86,40], nk:[88,54], sh:[88,56], el:[104,42], wr:[94,50],
+  hp:[88,100], kn:[88,136], an:[88,172], to:[108,176],
+  farEl:[102,48], farWr:[92,56]
+}, propsBack: machine(170) + cable([174,44],[94,50]), marks: arrow(140,52,110,46) };
+
+/* ---------- 坐姿機械 ---------- */
+P.SEAT_LEG_BENT = { p:{
+  hdc:[54,92], nk:[66,100], sh:[68,102], el:[84,112], wr:[100,118],
+  hp:[92,134], kn:[134,120], an:[132,152], to:[148,154]
+}, propsBack: '<rect x="30" y="98" width="12" height="56" rx="3" class="fp2"/>' + bench(38,132,58,9)
+ + '<rect x="140" y="108" width="10" height="52" rx="3" class="fp2"/>', ground:false };
+P.SEAT_LEG_EXT = { p:{
+  hdc:[54,92], nk:[66,100], sh:[68,102], el:[84,112], wr:[100,118],
+  hp:[92,134], kn:[134,126], an:[172,128], to:[184,134]
+}, propsBack: '<rect x="30" y="98" width="12" height="56" rx="3" class="fp2"/>' + bench(38,132,58,9)
+ + '<rect x="176" y="118" width="10" height="42" rx="3" class="fp2"/>', ground:false,
+   marks: arrow(162,158,176,136) };
+P.SEAT_PRESS_START = { p:{
+  hdc:[62,80], nk:[74,88], sh:[76,90], el:[62,104], wr:[80,110],
+  hp:[100,122], kn:[136,132], an:[136,168], to:[152,172]
+}, propsBack: '<rect x="44" y="70" width="12" height="60" rx="3" class="fp2"/>' + bench(52,120,58,9) };
+P.SEAT_PRESS_END = { p:{
+  hdc:[62,80], nk:[74,88], sh:[76,90], el:[104,92], wr:[130,94],
+  hp:[100,122], kn:[136,132], an:[136,168], to:[152,172]
+}, propsBack: '<rect x="44" y="70" width="12" height="60" rx="3" class="fp2"/>' + bench(52,120,58,9),
+   marks: arrow(100,74,128,78) };
+P.SEAT_ROW_START = { p:{
+  hdc:[66,78], nk:[72,92], sh:[74,94], el:[102,100], wr:[132,104],
+  hp:[80,126], kn:[120,120], an:[150,146], to:[164,148]
+}, propsBack: machine(178) + cable([180,100],[132,104]), ground:false };
+P.SEAT_ROW_END = { p:{
+  hdc:[62,78], nk:[70,92], sh:[72,94], el:[74,112], wr:[100,116],
+  hp:[80,126], kn:[120,120], an:[150,146], to:[164,148]
+}, propsBack: machine(178) + cable([180,100],[100,116]), ground:false,
+   marks: arrow(136,124,108,120) };
+
+/* ---------- 椅子撐體 ---------- */
+P.DIP_TOP = { p:{
+  hdc:[104,60], nk:[102,74], sh:[100,76], el:[92,96], wr:[86,116],
+  hp:[104,122], kn:[140,130], an:[164,152], to:[176,156]
+}, propsBack: bench(64,114,40,8) };
+P.DIP_BOTTOM = { p:{
+  hdc:[106,84], nk:[104,98], sh:[102,100], el:[86,112], wr:[86,116],
+  hp:[106,142], kn:[142,148], an:[164,158], to:[176,162]
+}, propsBack: bench(64,114,40,8), marks: arrow(126,86,126,112) };
+
+/* ---------- 反向划船（桌下）---------- */
+P.INVROW_DOWN = { p:{
+  hdc:[52,132], nk:[66,130], sh:[68,130], el:[76,112], wr:[84,96],
+  hp:[118,140], kn:[150,150], an:[174,166], to:[180,174]
+}, propsBack: '<rect x="60" y="88" width="70" height="7" rx="2" class="fp2"/>' };
+P.INVROW_UP = { p:{
+  hdc:[52,118], nk:[66,116], sh:[68,116], el:[88,108], wr:[84,96],
+  hp:[120,134], kn:[152,146], an:[174,164], to:[180,172]
+}, propsBack: '<rect x="60" y="88" width="70" height="7" rx="2" class="fp2"/>',
+   marks: arrow(96,138,96,118) };
+
+/* ---------- 高抬腿 ---------- */
+P.KNEE_UP = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[86,72], wr:[96,88],
+  hp:[96,96], kn:[124,86], an:[140,108], to:[150,116],
+  farEl:[108,72], farWr:[100,50], farKn:[92,134], farAn:[92,170], farTo:[110,174]
+}, marks: arrow(146,140,138,112) };
+
+/* ---------- 飛鳥 ---------- */
+P.FLY_OPEN = { p:{
+  hdc:[44,104], nk:[60,110], sh:[64,112], el:[54,88], wr:[44,66],
+  hp:[112,116], kn:[136,142], an:[140,174], to:[156,177],
+  farEl:[80,88], farWr:[94,68]
+}, propsBack: bench(28,110,66,9) };
+P.FLY_CLOSED = { p:{
+  hdc:[44,104], nk:[60,110], sh:[64,112], el:[62,86], wr:[66,62],
+  hp:[112,116], kn:[136,142], an:[140,174], to:[156,177],
+  farEl:[72,86], farWr:[72,62]
+}, propsBack: bench(28,110,66,9), marks: arrow(42,60,62,54) };
+
+/* ---------- 前平舉 ---------- */
+P.RAISE_DOWN = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[108,78], wr:[112,104],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[88,78], farWr:[86,104], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}};
+P.RAISE_UP = { p:{
+  hdc:[96,34], nk:[96,48], sh:[96,50], el:[120,52], wr:[144,52],
+  hp:[96,96], kn:[96,134], an:[96,172], to:[116,176],
+  farEl:[118,58], farWr:[142,58], farKn:[90,134], farAn:[90,172], farTo:[110,176]
+}, marks: arrow(126,96,140,62) };
+
+/* ---------- 單腳 RDL ---------- */
+P.SLRDL = { p:{
+  hdc:[132,78], nk:[120,86], sh:[120,88], el:[118,112], wr:[116,136],
+  hp:[82,100], kn:[84,136], an:[90,172], to:[108,176],
+  farKn:[48,102], farAn:[22,108], farTo:[12,112],
+  farEl:[114,112], farWr:[112,136]
+}};
+
+/* ---------- 補齊剩下的姿勢 ---------- */
+P.INCLINE_PU_TOP = { p:{
+  hdc:[46,96], nk:[60,102], sh:[62,104], el:[64,124], wr:[66,142],
+  hp:[116,128], kn:[148,150], an:[172,170], to:[178,177]
+}, propsBack: '<rect x="52" y="140" width="42" height="8" rx="2" class="fp2"/>'
+ + '<rect x="56" y="148" width="4" height="30" class="fp2"/><rect x="86" y="148" width="4" height="30" class="fp2"/>' };
+P.INCLINE_PU_BOT = { p:{
+  hdc:[46,122], nk:[60,126], sh:[62,128], el:[80,144], wr:[66,142],
+  hp:[116,148], kn:[148,164], an:[172,174], to:[178,178]
+}, propsBack: '<rect x="52" y="140" width="42" height="8" rx="2" class="fp2"/>'
+ + '<rect x="56" y="148" width="4" height="30" class="fp2"/><rect x="86" y="148" width="4" height="30" class="fp2"/>',
+   marks: arrow(100,124,100,146) };
+
+P.LEGPRESS_BENT = { p:{
+  hdc:[46,120], nk:[60,124], sh:[62,124], el:[80,132], wr:[96,138],
+  hp:[100,134], kn:[136,106], an:[142,138], to:[152,146]
+}, propsBack: '<rect x="26" y="112" width="10" height="52" rx="3" class="fp2"/>' + bench(34,132,58,9)
+ + '<rect x="144" y="96" width="12" height="56" rx="3" class="fp2"/>', ground:false };
+P.LEGPRESS_EXT = { p:{
+  hdc:[46,120], nk:[60,124], sh:[62,124], el:[80,132], wr:[96,138],
+  hp:[100,134], kn:[144,120], an:[180,110], to:[188,118]
+}, propsBack: '<rect x="26" y="112" width="10" height="52" rx="3" class="fp2"/>' + bench(34,132,58,9)
+ + '<rect x="182" y="82" width="12" height="56" rx="3" class="fp2"/>', ground:false,
+   marks: arrow(158,146,180,128) };
+
+P.THRUST_DOWN = { p:{
+  hdc:[42,104], nk:[58,112], sh:[58,112], el:[80,126], wr:[100,134],
+  hp:[116,150], kn:[148,140], an:[150,174], to:[166,177]
+}, propsBack: bench(18,112,48,9), propsFront: barbell(116,148,0,26) };
+P.THRUST_UP = { p:{
+  hdc:[42,104], nk:[58,112], sh:[58,112], el:[80,120], wr:[100,126],
+  hp:[116,120], kn:[148,124], an:[150,174], to:[166,177]
+}, propsBack: bench(18,112,48,9), propsFront: barbell(116,118,0,26),
+   marks: arrow(90,150,90,124) };
+
+P.SEATCALF_DOWN = { p:{
+  hdc:[52,86], nk:[64,94], sh:[66,96], el:[84,106], wr:[100,112],
+  hp:[92,128], kn:[132,122], an:[136,154], to:[158,148]
+}, propsBack: bench(38,126,58,9) + '<rect x="118" y="106" width="34" height="10" rx="3" class="fp2"/>'
+ + '<rect x="146" y="146" width="28" height="8" rx="2" class="fp2"/>', ground:false,
+   marks: arrow(168,136,168,116) };
+P.SEATCALF_UP = { p:{
+  hdc:[52,78], nk:[64,86], sh:[66,88], el:[84,98], wr:[100,104],
+  hp:[92,120], kn:[132,114], an:[136,144], to:[162,152]
+}, propsBack: bench(38,118,58,9) + '<rect x="118" y="98" width="34" height="10" rx="3" class="fp2"/>'
+ + '<rect x="146" y="150" width="28" height="8" rx="2" class="fp2"/>', ground:false };
+
+P.CSROW_START = { p:{
+  hdc:[58,80], nk:[70,90], sh:[72,92], el:[80,116], wr:[88,138],
+  hp:[92,124], kn:[104,150], an:[100,174], to:[118,177]
+}, propsBack: '<g class="fp2"><rect x="60" y="96" width="46" height="9" rx="3" transform="rotate(18 60 96)"/></g>' };
+P.CSROW_END = { p:{
+  hdc:[58,80], nk:[70,90], sh:[72,92], el:[58,112], wr:[84,122],
+  hp:[92,124], kn:[104,150], an:[100,174], to:[118,177]
+}, propsBack: '<g class="fp2"><rect x="60" y="96" width="46" height="9" rx="3" transform="rotate(18 60 96)"/></g>',
+   marks: arrow(104,142,86,124) };
+
+P.SEAT_OHP_START = { p:{
+  hdc:[92,58], nk:[92,72], sh:[92,74], el:[112,84], wr:[110,62],
+  hp:[92,118], kn:[128,124], an:[130,170], to:[146,174],
+  farEl:[74,84], farWr:[76,62]
+}, propsBack: chairBack(66,118) };
+P.SEAT_OHP_END = { p:{
+  hdc:[92,62], nk:[92,76], sh:[92,78], el:[98,54], wr:[100,30],
+  hp:[92,120], kn:[128,126], an:[130,170], to:[146,174],
+  farEl:[86,54], farWr:[84,30]
+}, propsBack: chairBack(66,118), marks: arrow(126,64,126,36) };
+
+P.INCLINE_CURL_DOWN = { p:{
+  hdc:[70,74], nk:[80,86], sh:[82,88], el:[86,114], wr:[88,140],
+  hp:[104,124], kn:[138,132], an:[140,172], to:[156,176],
+  farEl:[80,114], farWr:[80,140]
+}, propsBack: '<g class="fp2"><rect x="56" y="92" width="48" height="9" rx="3" transform="rotate(52 56 92)"/></g>'
+ + bench(78,122,50,9) };
+P.INCLINE_CURL_UP = { p:{
+  hdc:[70,74], nk:[80,86], sh:[82,88], el:[86,114], wr:[102,96],
+  hp:[104,124], kn:[138,132], an:[140,172], to:[156,176],
+  farEl:[80,114], farWr:[94,94]
+}, propsBack: '<g class="fp2"><rect x="56" y="92" width="48" height="9" rx="3" transform="rotate(52 56 92)"/></g>'
+ + bench(78,122,50,9), marks: arrow(114,138,114,104) };
+
+/* ---------- 器材掛在關節上 ----------
+   姿勢只描述身體，器材依動作不同掛上去，所以同一個「深蹲」姿勢
+   可以是高腳杯蹲（啞鈴在胸前）或背蹲舉（槓在肩上）。 */
+function gearSVG(kind, p){
+  if(!kind || !p) return "";
+  const mid = (a,b,t)=> [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t];
+  switch(kind){
+    case 'db':      // 雙手各一顆啞鈴
+      return dumbbell(p.wr[0], p.wr[1], 0) + (p.farWr ? dumbbell(p.farWr[0], p.farWr[1], 0, .85) : "");
+    case 'db1':     // 單手一顆
+      return dumbbell(p.wr[0], p.wr[1], 0);
+    case 'goblet':  // 一顆抱在胸前
+      { const c = mid(p.nk, p.hp, .28); return dumbbell(c[0]+10, c[1], 90); }
+    case 'dbmid':   // 一顆垂在兩腿中間（相撲蹲）
+      { const c = p.wr; return dumbbell(c[0], c[1], 90); }
+    case 'bbBack':  // 槓在上背
+      return barbell(p.sh[0]+2, p.sh[1]+4, 0, 30);
+    case 'bbHand':  // 槓握在手上
+      return barbell(p.wr[0], p.wr[1], 0, 30);
+    case 'plate':   // 槓片／負重（提踵、單槓負重）
+      return dumbbell(p.wr[0], p.wr[1], 90);
+    default: return "";
+  }
+}
+
+/* ---------- 動作 → 圖 ----------
+   a / b = 起始、結束姿勢；cap = 圖說；gear = 器材；one = 只有單張圖（靜態撐住類） */
+const EX_FIG = {
+  /* 居家 */
+  "GOBLET SQUAT":      {a:['SQUAT_TOP','起始 · 站直抱啞鈴'], b:['SQUAT_BOTTOM','蹲到大腿平行'], gear:'goblet'},
+  "SUMO SQUAT":        {a:['SQUAT_TOP','起始 · 站寬、腳尖外開'], b:['SQUAT_BOTTOM','垂直下蹲'], gear:'dbmid'},
+  "REVERSE LUNGE":     {a:['STAND','起始 · 站直'], b:['LUNGE_BOTTOM','往後跨一大步'], gear:'db'},
+  "GLUTE BRIDGE":      {a:['BRIDGE_DOWN','起始 · 屈膝躺平'], b:['BRIDGE_UP','夾臀頂到成直線']},
+  "DB RDL":            {a:['STAND','起始 · 站直握啞鈴'], b:['HINGE_BOTTOM','屁股往後、上身前傾'], gear:'db'},
+  "SINGLE-LEG RDL":    {a:['STAND','起始 · 單腳站穩'], b:['SLRDL','前傾、後腳往後伸'], gear:'db1'},
+  "PUSH-UP":           {a:['PUSHUP_TOP','起始 · 身體成一直線'], b:['PUSHUP_BOTTOM','胸口下降到近地面']},
+  "PUSH-UP · WIDE":    {a:['PUSHUP_TOP','起始 · 雙手比肩寬'], b:['PUSHUP_BOTTOM','胸口下降']},
+  "INCLINE PUSH-UP":   {a:['INCLINE_PU_TOP','起始 · 手撐高處'], b:['INCLINE_PU_BOT','胸口下降到手的高度']},
+  "BENCH DIP":         {a:['DIP_TOP','起始 · 手撐椅緣'], b:['DIP_BOTTOM','身體垂直下沉']},
+  "DB SHOULDER PRESS": {a:['PRESS_START','起始 · 啞鈴在肩膀高度'], b:['PRESS_END','推到頭頂正上方'], gear:'db'},
+  "DB THRUSTER":       {a:['SQUAT_BOTTOM','先蹲下'], b:['PRESS_END','站起同時推到頭頂'], gear:'db'},
+  "DB ROW":            {a:['DBROW_DOWN','起始 · 一手撐椅、一手垂下'], b:['DBROW_UP','手肘往後拉到腰側'], gear:'db1'},
+  "BENT-OVER ROW":     {a:['ROW_START','起始 · 前傾約 45 度'], b:['ROW_END','手肘往後拉到腰側'], gear:'db'},
+  "INVERTED ROW":      {a:['INVROW_DOWN','起始 · 手臂伸直懸吊'], b:['INVROW_UP','把胸口拉向桌面']},
+  "DB CURL":           {a:['CURL_DOWN','起始 · 手臂自然垂下'], b:['CURL_UP','只彎手肘舉到肩前'], gear:'db'},
+  "CURL TO PRESS":     {a:['CURL_UP','先彎舉到肩膀'], b:['PRESS_END','轉掌再推到頭頂'], gear:'db'},
+  "DEAD BUG":          {one:['DEADBUG','對側手腳同時伸出，腰不離地']},
+  "PLANK":             {one:['PLANK','肘撐地，頭到腳跟成一直線']},
+  "SIDE PLANK":        {one:['SIDE_PLANK','側撐起，身體成一直線']},
+  "HIGH KNEES":        {a:['STAND','起始 · 原地站直'], b:['KNEE_UP','輪流把膝蓋抬到髖部高']},
+
+  /* 健身房 */
+  "BACK SQUAT":        {a:['SQUAT_TOP','起始 · 槓在上背、站直'], b:['SQUAT_BOTTOM','蹲到大腿至少平行'], gear:'bbBack'},
+  "ROMANIAN DEADLIFT": {a:['STAND','起始 · 站直握槓'], b:['HINGE_BOTTOM','屁股往後、槓沿大腿下滑'], gear:'bbHand'},
+  "TRAP-BAR DEADLIFT": {a:['HINGE_BOTTOM','起始 · 屁股後坐、背打直'], b:['STAND','踩地把槓拉到站直'], gear:'bbHand'},
+  "LEG PRESS":         {a:['LEGPRESS_BENT','起始 · 膝蓋約 90 度'], b:['LEGPRESS_EXT','推到膝蓋接近打直']},
+  "LEG CURL":          {a:['SEAT_LEG_EXT','起始 · 腿接近伸直'], b:['SEAT_LEG_BENT','把滾墊往身體彎到底']},
+  "LEG EXTENSION":     {a:['SEAT_LEG_BENT','起始 · 膝蓋彎曲'], b:['SEAT_LEG_EXT','伸直到接近水平']},
+  "STANDING CALF RAISE":{a:['CALF_DOWN','起始 · 腳跟沉到最低'], b:['CALF_UP','踮到最高、停 1 秒']},
+  "SEATED CALF RAISE": {a:['SEATCALF_DOWN','起始 · 腳跟沉到最低'], b:['SEATCALF_UP','踮到最高、停 1 秒']},
+  "HIP THRUST":        {a:['THRUST_DOWN','起始 · 上背靠椅、髖部下沉'], b:['THRUST_UP','頂到膝蓋到肩成直線']},
+  "BULGARIAN SPLIT SQUAT":{a:['STAND','起始 · 後腳放椅上'], b:['BSS','身體垂直下沉'], gear:'db'},
+  "BARBELL BENCH PRESS":{a:['BENCH_TOP','起始 · 槓在胸口正上方'], b:['BENCH_BOTTOM','下降到碰胸口下緣']},
+  "MACHINE CHEST PRESS":{a:['SEAT_PRESS_START','起始 · 把手在胸口旁'], b:['SEAT_PRESS_END','往前推到接近打直']},
+  "CHEST-SUPPORTED ROW":{a:['CSROW_START','起始 · 胸口貼墊、手伸直'], b:['CSROW_END','手肘往後拉到身側']},
+  "CABLE ROW":         {a:['SEAT_ROW_START','起始 · 手臂往前伸'], b:['SEAT_ROW_END','拉到肚子位置']},
+  "PULL-UP / LAT PULLDOWN":{a:['PULL_DOWN','起始 · 手臂伸直懸吊'], b:['PULL_UP','拉到鎖骨高度']},
+  "SEATED DB SHOULDER PRESS":{a:['SEAT_OHP_START','起始 · 啞鈴在肩膀高度'], b:['SEAT_OHP_END','推到頭頂正上方'], gear:'db'},
+  "STANDING OHP":      {a:['PRESS_START','起始 · 槓在鎖骨高度'], b:['PRESS_END','推到頭頂正上方'], gear:'bbHand'},
+  "DUMBBELL FLY":      {a:['FLY_OPEN','起始 · 往兩側打開'], b:['FLY_CLOSED','用胸把手臂帶回中間'], gear:'db'},
+  "TRICEPS PUSHDOWN":  {a:['PUSHDOWN_START','起始 · 手肘彎曲夾身側'], b:['PUSHDOWN_END','壓到手臂打直']},
+  "FACE PULL":         {a:['FACEPULL_START','起始 · 手臂往前伸'], b:['FACEPULL_END','拉到臉的兩側']},
+  "INCLINE DB CURL":   {a:['INCLINE_CURL_DOWN','起始 · 手臂垂在身後'], b:['INCLINE_CURL_UP','只彎手肘舉起'], gear:'db'},
+  "FRONT RAISE":       {a:['RAISE_DOWN','起始 · 啞鈴在大腿前'], b:['RAISE_UP','往前抬到肩膀高'], gear:'db'},
+  "HANGING LEG RAISE": {a:['HANG_DOWN','起始 · 懸吊、身體伸直'], b:['HANG_UP','把膝蓋捲到胸口高']}
+};
+
+/* 畫一個動作的圖（起始／結束兩格，或單格） */
+function figPanel(poseName, cap, gear){
+  const pose = P[poseName];
+  if(!pose) return "";
+  const body = figSVG(pose.p, pose) + gearSVG(gear, pose.p);
+  return `<figure class="figbox">
+    <svg viewBox="0 0 200 200" class="figsvg" aria-hidden="true">${body}</svg>
+    <figcaption>${cap}</figcaption>
+  </figure>`;
+}
+function exFigures(en){
+  const f = EX_FIG[en];
+  if(!f) return "";
+  if(f.one) return `<div class="figrow one">${figPanel(f.one[0], f.one[1], f.gear)}</div>`;
+  return `<div class="figrow">
+    ${figPanel(f.a[0], f.a[1], f.gear)}
+    <div class="figarrow">→</div>
+    ${figPanel(f.b[0], f.b[1], f.gear)}
+  </div>`;
+}
+
+/* ============ 動作庫畫面 ============ */
+let exQuery = "";
+let exPart = "全部";
+let exOpen = null;   // 目前展開的動作 en，null = 列表
+
+function exIndex(){
+  // 回傳 [{en, name, part, where:[...]}, ...]，依課表實際出現的動作組成。
+  const map = {};
+  EX_SOURCE().forEach(item=>{
+    const lib = EX_LIB[item.en] || null;
+    if(!map[item.en]) map[item.en] = {
+      en:item.en, name:item.name,
+      part: lib ? lib.part : "其他",
+      where:[], lib:lib
+    };
+    map[item.en].where.push(item.where);
+  });
+  return Object.values(map);
+}
+function exParts(){
+  const order = ["全部","下肢","上肢推","上肢拉","上肢","核心","全身","體能","其他"];
+  const have = new Set(exIndex().map(x=>x.part));
+  return order.filter(p=> p==="全部" || have.has(p));
+}
+// 訓練中來查動作時，給一個明確的回去入口。
+// 不能讓人只能用下面的分頁列返回——那條路會清掉進行中的訓練。
+function exResumeBar(){
+  if(!sessionCtx) return "";
+  return `<button class="exresume" data-exresume="1">‹ 返回訓練<span class="sp">進行中的訓練還在</span></button>`;
+}
+function renderExercises(){
+  if(exOpen) return exResumeBar() + renderExerciseDetail(exOpen);
+  const q = exQuery.trim().toLowerCase();
+  let list = exIndex();
+  if(exPart!=="全部") list = list.filter(x=> x.part===exPart);
+  if(q) list = list.filter(x=>
+    x.name.toLowerCase().includes(q) || x.en.toLowerCase().includes(q) ||
+    (x.lib && (x.lib.muscles||"").toLowerCase().includes(q))
+  );
+  list.sort((a,b)=> a.part===b.part ? a.name.localeCompare(b.name,"zh-Hant") : 0);
+  return `
+    ${exResumeBar()}
+    <div class="card">
+      <div class="section-title"><span class="num">動作</span><h2>動作庫</h2></div>
+      <div class="exsearch">
+        <span class="ic">🔍</span>
+        <input id="exq" type="text" placeholder="搜尋動作名稱或部位" value="${exQuery.replace(/"/g,'&quot;')}">
+      </div>
+      <div class="exfilters">
+        ${exParts().map(p=>`<button data-expart="${p}" class="${p===exPart?'on':''}">${p}</button>`).join("")}
+      </div>
+      ${list.length===0 ? `<div class="exnone">找不到「${exQuery}」<br>試試中文名稱、英文名稱或部位</div>` :
+        list.map(x=>`
+          <div class="exrow" data-exopen="${x.en}">
+            <div class="ini">${x.part}</div>
+            <div class="tx">
+              <div class="n">${x.name}</div>
+              <div class="e">${x.en}</div>
+            </div>
+            <div class="ar">›</div>
+          </div>`).join("")}
+    </div>
+  `;
+}
+function renderExerciseDetail(en){
+  const item = exIndex().find(x=>x.en===en);
+  if(!item) return `<div class="exnone">找不到這個動作</div>`;
+  const L = item.lib;
+  const where = [...new Set(item.where)].join("、");
+  return `
+    <div class="card">
+      <button class="exback" data-exback="1">‹ 返回動作庫</button>
+      <div class="exhead">
+        <h2>${item.name}</h2>
+        <div class="en">${item.en}</div>
+        <div class="exchips">
+          <span class="exchip">${item.part}</span>
+          ${L && L.muscles ? `<span class="exchip">${L.muscles}</span>` : ""}
+          ${L && L.gear ? `<span class="exchip">${L.gear}</span>` : ""}
+        </div>
+      </div>
+
+      ${exFigures(item.en)}
+      ${where ? `<div class="exwhere">課表位置：<b>${where}</b></div>` : ""}
+
+      ${!L ? `<div class="exsec"><div class="t">說明</div>
+        <p style="font-size:14px;line-height:1.65;color:var(--muted)">
+        這個動作還沒有詳細說明。先看課表上的提示，或在網路上搜尋「${item.en}」看示範影片。</p></div>` : `
+
+      ${L.setup ? `<div class="exsec"><div class="t">器材設定</div>
+        <p style="font-size:14px;line-height:1.65">${L.setup}</p></div>` : ""}
+
+      <div class="exsec">
+        <div class="t">動作步驟</div>
+        <ol class="exsteps">${L.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+      </div>
+
+      <div class="exsec">
+        <div class="t">常見錯誤</div>
+        <ul class="exmiss">${L.mistakes.map(s=>`<li>${s}</li>`).join("")}</ul>
+      </div>
+
+      ${(ALT_LIB[item.en]||[]).length ? `<div class="exsec">
+        <div class="t">器材沒有／被占用時，改做</div>
+        <ul class="exalt">${ALT_LIB[item.en].map(a=>`<li><div class="an">${a.n}</div><span class="ag">${a.g}</span><div class="ah">${a.h}</div></li>`).join("")}</ul>
+        <div class="exaltnote">已依器材由常見到少見排序，第一個不行就往下找。換動作時，組數與 RIR 照原課表；重量先抓輕再調整，紀錄時備註寫上實際做的動作。</div>
+      </div>` : ""}
+
+      <div class="exsec">
+        <div class="t">調整難度</div>
+        <div class="exscale">
+          <div><div class="h">做不到 · 退階</div><p>${L.easier}</p></div>
+          <div><div class="h">太輕鬆 · 進階</div><p>${L.harder}</p></div>
+        </div>
+      </div>
+
+      ${L.safety ? `<div class="exsec"><div class="t">安全</div>
+        <div class="exsafe"><b>注意</b>　${L.safety}</div></div>` : ""}
+      `}
+    </div>
+  `;
+}
+function bindExercises(){
+  const q = document.getElementById("exq");
+  if(q) q.addEventListener("input", e=>{
+    exQuery = e.target.value;
+    // 只重畫列表，不動整頁，否則每打一個字輸入框就失焦
+    const host = document.getElementById("view");
+    const cur = e.target.selectionStart;
+    host.innerHTML = renderExercises();
+    bindDynamic();
+    const nq = document.getElementById("exq");
+    if(nq){ nq.focus(); nq.setSelectionRange(cur, cur); }
+  });
+  document.querySelectorAll("[data-expart]").forEach(b=> b.addEventListener("click", ()=>{
+    exPart = b.dataset.expart; render();
+  }));
+  document.querySelectorAll("[data-exopen]").forEach(b=> b.addEventListener("click", ()=>{
+    exOpen = b.dataset.exopen; window.scrollTo(0,0); render();
+  }));
+  const resume = document.querySelector("[data-exresume]");
+  if(resume) resume.addEventListener("click", ()=>{
+    exOpen = null; currentTab = "session"; window.scrollTo(0,0); render();
+  });
+  const back = document.querySelector("[data-exback]");
+  if(back) back.addEventListener("click", ()=>{ exOpen = null; window.scrollTo(0,0); render(); });
+  // 訓練中／說明頁的「怎麼做」快捷
+  document.querySelectorAll("[data-exjump]").forEach(b=> b.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    exOpen = b.dataset.exjump; currentTab = "ex"; window.scrollTo(0,0); render();
+  }));
+}
+
+/* ============ 主題 ============ */
+function applyTheme(){
+  const t = state.theme || "light";
+  document.body.setAttribute("data-theme", t);
+  const btn = document.getElementById("themeBtn");
+  if(btn){
+    btn.textContent = t==="dark" ? "☀" : "☾";
+    btn.setAttribute("aria-label", t==="dark" ? "切換淺色" : "切換深色");
+  }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", t==="dark" ? "#0D0F11" : THEME_LIGHT_BAR);
+}
+function toggleTheme(){
+  state.theme = (state.theme==="dark") ? "light" : "dark";
+  saveState(); applyTheme();
+}
+
+/* ============ ROUTER ============ */
+let currentTab = "home";
+let sessionCtx = null;
+const tabbar = document.querySelectorAll(".tabbar button");
+// 切換分頁本來就會丟掉進行中的 sessionCtx，草稿也要一起清掉——
+// 否則 app 認為「沒有訓練中」但草稿還留著，下次開啟會莫名跳出還原提示。
+tabbar.forEach(btn=>{ btn.addEventListener("click", ()=>{ currentTab=btn.dataset.tab; if(sessionCtx) clearDraft(); sessionCtx=null; render(); }); });
+
+function render(){
+  tabbar.forEach(b=> b.classList.toggle("active", b.dataset.tab===currentTab));
+  const view = document.getElementById("view");
+  if(currentTab==="home") view.innerHTML = renderHome();
+  else if(currentTab==="progress") view.innerHTML = renderProgress();
+  else if(currentTab==="log") view.innerHTML = renderLog();
+  else if(currentTab==="guide") view.innerHTML = renderGuide();
+  else if(currentTab==="ex") view.innerHTML = renderExercises();
+  else if(currentTab==="session") view.innerHTML = renderSession();
+  bindDynamic();
+  saveDraft();
+}
+
+/* ============ HOME ============ */
+function renderHome(){
+  const days=[]; const today=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    const s=state.sessions.find(s=>s.date===key);
+    days.push({key,wd:["日","一","二","三","四","五","六"][d.getDay()],dnum:d.getDate(),isToday:i===0,day:s?s.day:null});
+  }
+  const checkedCount = Object.values(state.deloadChecklist).filter(Boolean).length;
+
+  return `
+    <div class="card">
+      <div class="section-title"><span class="num">01</span><h2>本週訓練</h2></div>
+      <div class="week-strip">
+        ${days.map(d=>`
+          <div class="week-day ${d.isToday?"today":""}">
+            <div class="wd">${d.wd}</div><div class="dnum">${d.dnum}</div>
+            ${d.day? `<div class="badge">${d.day==='cardio'?'C':d.day}</div>` : `<div class="badge empty">·</div>`}
+          </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">02</span><h2>今天練哪天</h2></div>
+      <div class="daypick">
+        ${Object.entries(DAYS).map(([k,d])=>`
+          <button class="dbtn" data-start="${k}">
+            <div class="l"><div class="dl">DAY ${k}</div><div class="dn">${d.name}</div><div class="dm">${d.meta}</div></div>
+            <div class="key">主課題<br><b style="color:var(--ink)">${d.key}</b></div>
+          </button>`).join("")}
+        <button class="dbtn cardio" data-start="cardio">
+          <div class="l"><div class="dl">DAY 5 · 選配</div><div class="dn">有氧</div><div class="dm">${CARDIO.activity}</div></div>
+          <div class="key">${CARDIO.duration}<br>${CARDIO.intensity}</div>
+        </button>
+      </div>
+      <div class="note">避免安排在 Day 1 / Day 3（下肢日）之前，以免影響深蹲與硬舉表現。</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">03</span><h2>本週自我檢查（Deload）</h2></div>
+      ${DELOAD_TRIGGERS.map((t,i)=>`
+        <label class="check-item">
+          <input type="checkbox" data-deload="${i}" ${state.deloadChecklist[i]?"checked":""}>
+          <span>${t}</span>
+        </label>`).join("")}
+      ${checkedCount>0 ? `<div class="deload-flag">出現 ${checkedCount} 項 → 這週建議執行 Deload（組數砍 30–40%，重量維持不變，見「說明」頁）</div>` : ""}
+    </div>
+  `;
+}
+
+/* ============ SESSION ============ */
+function startSession(dayKey){
+  // 開始／結束時間戳——相減得出訓練時長。不是碼表累加，所以中途切出去、
+  // 鎖螢幕、分頁被凍結都不影響準確度。用途：讓紀錄能顯示「日期＋時長」，
+  // 符合運動i台灣這類活動要求的運動紀錄佐證格式。
+  if(dayKey==="cardio"){
+    sessionCtx = {day:"cardio", note:"", startTime:Date.now(), endTime:null};
+  } else {
+    const d = DAYS[dayKey];
+    sessionCtx = {
+      day: dayKey,
+      startTime: Date.now(),
+      endTime: null,
+      sets: d.exercises.map(ex=> blankSets(ex.sets)),
+      swaps: {},
+      swapOpen: null,
+      note: ""
+    };
+  }
+  currentTab="session"; render();
+}
+
+let timerInterval=null;
+function renderSession(){
+  if(sessionCtx.day==="cardio"){
+    return `
+      <div class="dayhead"><div class="dl">DAY 5 · 選配</div><h2>有氧</h2><div class="meta">${CARDIO.activity}</div></div>
+      <div class="card">
+        <div class="section-title"><span class="num">內容</span><h2>${CARDIO.duration} · ${CARDIO.intensity}</h2></div>
+        <div class="note">${CARDIO.note}</div>
+        <textarea id="sessionNote" placeholder="備註（選填）">${sessionCtx.note}</textarea>
+      </div>
+      <div class="btn-row"><button class="btn accent block" id="finishSession">完成 · 存入紀錄</button></div>
+      <div class="btn-row" style="margin-top:8px;"><button class="btn ghost block" id="cancelSession">取消</button></div>
+    `;
+  }
+  const d = DAYS[sessionCtx.day];
+  return `
+    <div class="dayhead"><div class="dl">DAY ${sessionCtx.day}</div><h2>${d.name}</h2><div class="meta">主課題：${d.key}</div></div>
+    <div class="card">
+      <div class="section-title"><span class="num">熱身</span><h2>5–8 分鐘</h2></div>
+      <div class="note">${d.warmup}</div>
+    </div>
+    ${d.exercises.map((ex,i)=>renderExerciseCard(exAt(sessionCtx.day,i,sessionCtx.swaps),i)).join("")}
+    <div class="card">
+      <div class="section-title"><span class="num">備註</span><h2>今天狀況</h2></div>
+      <textarea id="sessionNote" placeholder="睡眠、狀態、任何值得記的事">${sessionCtx.note}</textarea>
+    </div>
+    <div class="btn-row"><button class="btn accent block" id="finishSession">完成本次訓練 · 存入紀錄</button></div>
+    <div class="btn-row" style="margin-top:8px;"><button class="btn ghost block" id="cancelSession">取消，返回本週</button></div>
+  `;
+}
+
+function renderSwapPanel(i){
+  const baseEx = DAYS[sessionCtx.day].exercises[i];
+  const cur = sessionCtx.swaps ? sessionCtx.swaps[i] : null;
+  const alts = ALT_LIB[baseEx.en]||[];
+  return `<div class="swp">
+    <div class="st">選一個改做（組數／次數會一起換）</div>
+    ${cur!==null && cur!==undefined ? `<div class="opt">
+      <div class="an">原動作：${baseEx.name}</div>
+      <div class="rx"><b>${baseEx.sets}</b> 組 × <b>${baseEx.reps}</b> 次 · RIR <b>${baseEx.rir}</b> · 休息 <b>${baseEx.rest}</b></div>
+      <button class="btn ghost sm go" data-swapto="${i}-back">換回原動作</button></div>` : ""}
+    ${alts.map((a,ai)=>{
+      const e = exAt(sessionCtx.day,i,{[i]:ai});
+      const on = cur===ai;
+      return `<div class="opt">
+        <div class="an">${a.n}${on?"（目前）":""}</div>
+        <div class="ag">需要：${a.g}</div>
+        <div class="rx"><b>${e.sets}</b> 組 × <b>${e.reps}</b> 次 · RIR <b>${e.rir}</b> · 休息 <b>${e.rest}</b></div>
+        <button class="btn accent sm go" data-swapto="${i}-${ai}" ${on?"disabled":""}>改做這個</button>
+      </div>`;
+    }).join("")}
+    <button class="btn ghost sm" style="width:100%" data-swapopen="${i}">收起</button>
+  </div>`;
+}
+function renderExerciseCard(ex, i){
+  const baseEx = DAYS[sessionCtx.day].exercises[i];
+  const swapped = !!ex.swapOf;
+  const w = state.weights[ex.name] || {};
+  const currentW = w.current!=null ? w.current : (ex.load && !isNaN(parseFloat(ex.load)) ? parseFloat(ex.load) : null);
+  const suggestion = w.suggested;
+  const rows = sessionCtx.sets[i];
+  return `
+    <div class="ex-card">
+      <div class="ex-head">
+        <div class="top"><span class="name">${String(i+1).padStart(2,"0")} · ${ex.name}${ex.en&&EX_LIB[ex.en]?`<button class="exguide" data-exjump="${ex.en}">怎麼做</button>`:""}${(ALT_LIB[baseEx.en]||[]).length?`<button class="swapbtn" data-swapopen="${i}">${swapped?"換別的":"沒器材？換動作"}</button>`:""}${swapped?`<span class="swaptag">替代</span>`:""}</span></div>
+        <div class="en">${swapped?("替代自："+baseEx.name+"（"+baseEx.en+"）"):ex.en}</div>
+        <div class="presc">
+          <span>組數 <b>${ex.sets}</b></span>
+          <span>次數 <b>${ex.reps}</b></span>
+          <span>RIR <b>${ex.rir}</b></span>
+          <span>休息 <b>${ex.rest}</b></span>
+          <span>建議 <b>${ex.load}${ex.loadUnit?" "+ex.loadUnit:""}</b></span>
+        </div>
+        ${ex.note?`<div class="cue">${ex.note}</div>`:""}
+        ${currentW!=null ? `<div class="cue">上次重量：<b style="color:var(--ink)">${currentW} kg</b></div>` : ""}
+        ${suggestion ? `
+          <div class="sugg">
+            <span>${suggestion.text}</span>
+            ${suggestion.amt ? `<button data-apply-sugg="${ex.name}" data-amt="${suggestion.amt}">套用 ${suggestion.amt>0?"+":""}${suggestion.amt}kg</button>` : ""}
+          </div>` : ""}
+      </div>
+      ${sessionCtx.swapOpen===i ? renderSwapPanel(i) : ""}
+      <table class="set-table">
+        <tr><th style="width:30px;">組</th><th>重量 kg</th><th>次數</th><th>RIR</th><th style="width:36px;">完成</th></tr>
+        ${rows.map((r,si)=>`
+          <tr>
+            <td class="sn">${si+1}</td>
+            <td><input type="number" inputmode="decimal" data-w="${i}-${si}" value="${r.weight}" placeholder="${currentW!=null?currentW:'—'}"></td>
+            <td><input type="number" inputmode="numeric" data-r="${i}-${si}" value="${r.reps}" placeholder="${repCeiling(ex.reps)||'—'}"></td>
+            <td><input type="number" inputmode="numeric" data-i="${i}-${si}" value="${r.rir}" placeholder="${ex.rir!=="—"?ex.rir:''}"></td>
+            <td class="done-cell"><input type="checkbox" data-d="${i}-${si}" ${r.done?"checked":""}></td>
+          </tr>`).join("")}
+      </table>
+      <button class="timer-btn" data-timer="${i}" data-rest="${parseRestSeconds(ex.rest)}">⏱ 組間休息 ${ex.rest}</button>
+    </div>
+  `;
+}
+
+function bindTimer(idx, secs){
+  if(timerInterval) return;
+  const btn = document.querySelector(`[data-timer="${idx}"]`);
+  let remain = secs;
+  timerInterval = setInterval(()=>{
+    remain--;
+    if(remain<=0){
+      clearInterval(timerInterval); timerInterval=null;
+      btn.classList.remove("running");
+      btn.textContent = "✓ 休息完成，開始下一組";
+      if(navigator.vibrate) navigator.vibrate([200,80,200]);
+      setTimeout(()=>{ if(btn) btn.textContent = `⏱ 組間休息 ${exAt(sessionCtx.day,idx,sessionCtx.swaps).rest}`; }, 2500);
+    } else {
+      btn.textContent = `⏱ 休息中 · ${Math.floor(remain/60)}:${String(remain%60).padStart(2,"0")}`;
+    }
+  },1000);
+  btn.classList.add("running");
+  btn.textContent = `⏱ 休息中 · ${Math.floor(remain/60)}:${String(remain%60).padStart(2,"0")}`;
+}
+
+/* ============ PROGRESS ============ */
+function catLabel(cat){
+  if(cat==="BIG_LOWER") return "下肢大重量 · +5 kg／次";
+  if(cat==="BIG_UPPER") return "上肢大重量 · +2.5 kg／次";
+  if(cat==="OTHER_DB") return "其他（啞鈴）· 先加次數，滿了 +2 kg";
+  return "其他（滑輪／機械）· 先加次數，滿了 +2.5 kg";
+}
+function allExercises(){
+  const map = new Map();
+  Object.values(DAYS).forEach(d=> d.exercises.forEach(ex=>{ if(!map.has(ex.name)) map.set(ex.name, ex); }));
+  return [...map.values()];
+}
+function renderProgress(){
+  const exs = allExercises();
+  return `
+    <div class="card">
+      <div class="section-title"><span class="num">02</span><h2>Progression 唯一規則</h2></div>
+      <div class="chain">
+        <div class="chain-node"><div class="idx">1</div><div class="txt"><b>做到次數上限</b><span>每一組都達到指定的次數，不是只有第一組</span></div></div>
+        <div class="chain-node"><div class="idx">2</div><div class="txt"><b>確認 RIR 符合</b><span>做完還剩下課表指定的保留次數</span></div></div>
+        <div class="chain-node"><div class="idx">3</div><div class="txt"><b>下次加重量</b><span>下半身大重量 +5 kg ｜ 上半身大重量 +2.5 kg</span></div></div>
+        <div class="chain-node"><div class="idx">4</div><div class="txt"><b>次數掉了重新累積</b><span>停在這個重量，每週把次數推回上限，然後再加</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title"><span class="num">03</span><h2>各動作目前重量</h2></div>
+      ${exs.map(ex=>{
+        const w = state.weights[ex.name]||{};
+        const cur = w.current!=null ? w.current : (ex.load && !isNaN(parseFloat(ex.load)) ? parseFloat(ex.load) : null);
+        return `
+        <div class="wex-card">
+          <div class="top"><span class="name">${ex.name}</span><span class="cat">${catLabel(ex.cat)}</span></div>
+          <div class="w">${cur!=null? cur : "試重"} ${cur!=null?'<span>kg</span>':""}</div>
+        </div>`;
+      }).join("")}
+    </div>
+  `;
+}
+
+/* ============ LOG ============ */
+function renderLog(){
+  const sessions = [...state.sessions].sort((a,b)=> b.date.localeCompare(a.date));
+  return `
+    <div class="card">
+      <div class="section-title"><span class="num">04</span><h2>Weekly Check-in</h2></div>
+      <div class="wc-row">
+        <div><label>週次</label><input type="text" id="wcWeek" placeholder="例如 W1"></div>
+        <div><label>本週訓練次數</label><input type="number" id="wcSessions" min="0" max="5"></div>
+        <div><label>平均睡眠 (h)</label><input type="number" id="wcSleep" step="0.5"></div>
+        <div><label>體重 (kg)</label><input type="number" id="wcBw" step="0.1"></div>
+        <div><label>精力 (0–10)</label><input type="number" id="wcEnergy" min="0" max="10"></div>
+        <div><label>恢復 (0–10)</label><input type="number" id="wcRecovery" min="0" max="10"></div>
+      </div>
+      <button class="btn accent block sm" id="addWeekCheck">新增本週紀錄</button>
+      ${state.weekChecks.length>0 ? `
+        <table class="wc-table">
+          <tr><th>週</th><th>次數</th><th>睡眠</th><th>體重</th><th>精力</th><th>恢復</th></tr>
+          ${[...state.weekChecks].reverse().map(w=>`
+            <tr><td>${w.week}</td><td>${w.sessions}</td><td>${w.sleep}</td><td>${w.bw}</td><td>${w.energy}</td><td>${w.recovery}</td></tr>
+          `).join("")}
+        </table>` : ""}
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">05</span><h2>訓練紀錄</h2></div>
+      <div class="btn-row">
+        <button class="btn ghost sm" id="exportBtn">匯出備份 (JSON)</button>
+        <label class="btn ghost sm" style="cursor:pointer;">匯入備份<input type="file" id="importFile" accept="application/json" class="hidden"></label>
+      </div>
+    </div>
+    ${sessions.length===0 ? `<div class="empty-state">還沒有任何紀錄，練完第一次訓練後會出現在這裡</div>` :
+      sessions.map(s=>{
+        const durMin = sessionDurationMin(s);
+        const durBlock = durMin ? `<div style="display:flex; align-items:baseline; gap:6px; margin:6px 0 2px;">
+            <span style="font-size:11px; letter-spacing:.08em; opacity:.6;">訓練時長</span>
+            <b style="font-size:26px; line-height:1;">${durMin}</b>
+            <span style="font-size:12px; opacity:.6;">分鐘</span>
+          </div>` : "";
+        if(s.day==="cardio"){
+          return `<div class="log-item">
+            <div class="top"><span class="date">${s.date}</span><span class="day">DAY 5 · 有氧</span></div>
+            ${durBlock}
+            ${s.note?`<div class="log-ex">📝 ${s.note}</div>`:""}
+            <button class="del" data-del="${s.id}">刪除這筆紀錄</button>
+          </div>`;
+        }
+        const d = DAYS[s.day];
+        return `
+        <div class="log-item">
+          <div class="top"><span class="date">${s.date}</span><span class="day">DAY ${s.day} · ${d.name}</span></div>
+          ${durBlock}
+          <div class="log-ex">
+            ${d.exercises.map((baseEx,i)=>{
+              const ex = exAt(s.day,i,s.swaps);
+              const rows = s.sets[i].filter(r=>r.weight||r.reps);
+              if(rows.length===0) return "";
+              const summary = rows.map(r=>`${r.weight||"—"}kg×${r.reps||"—"}${r.rir!==""?" RIR"+r.rir:""}`).join("、");
+              return `<div><b>${ex.name}</b>${ex.swapOf?`（替代 ${ex.swapOf}）`:""}：${summary}</div>`;
+            }).join("")}
+          </div>
+          ${s.flags && s.flags.length>0 ? `<div class="flag-list">${s.flags.map(f=>"↗ "+f).join("<br>")}</div>` : ""}
+          ${s.note?`<div class="log-ex">📝 ${s.note}</div>`:""}
+          <button class="del" data-del="${s.id}">刪除這筆紀錄</button>
+        </div>`;
+      }).join("")
+    }
+  `;
+}
+
+/* ============ GUIDE ============ */
+function renderGuide(){
+  return `
+    <div class="card">
+      <div class="section-title"><span class="num">01</span><h2>Program Overview</h2></div>
+      <table class="data">
+        <tr><th>Day</th><th>Focus</th><th>Time</th><th>Key Lift</th></tr>
+        <tr><td>1</td><td>下半身 A</td><td>90 分+</td><td>Back Squat</td></tr>
+        <tr><td>2</td><td>上半身 A — 推為主</td><td>90 分+</td><td>Bench Press</td></tr>
+        <tr><td>3</td><td>下半身 B</td><td>90 分+</td><td>Trap-bar Deadlift</td></tr>
+        <tr><td>4</td><td>上半身 B — 拉為主</td><td>90 分+</td><td>Pull-up / Lat Pulldown</td></tr>
+        <tr><td>5</td><td>選配有氧</td><td>20–30 分</td><td>腳踏車／划船機／快走</td></tr>
+      </table>
+      <div class="note">有氧安排：不含跑步。除了選配 Day 5，也可以在 Day 2 或 Day 4（上肢日）訓練後額外加 15–20 分鐘低強度有氧。避免安排在 Day 1 / Day 3（下肢日）之前，以免影響深蹲與硬舉表現。</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">02</span><h2>三個貫穿全部訓練日的規則</h2></div>
+      <table class="data">
+        <tr><th>Rule</th><th>意思</th></tr>
+        <tr><td>RIR 保留次數</td><td>做完一組後還能再做幾下；RIR 2 = 做完還能再做 2 下，不是做到力竭</td></tr>
+        <tr><td>第一次上場</td><td>沒有重量基準的動作，先用熱身組確認動作，正式組挑「做滿次數上限還有 2–3 下餘力」的重量記下來</td></tr>
+        <tr><td>怎麼變強</td><td>當每一組都做到次數範圍上限，且仍符合指定 RIR → 下次加重量</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">03</span><h2>第一次上場：怎麼找起始重量</h2></div>
+      <table class="data">
+        <tr><th>#</th><th>怎麼做</th></tr>
+        <tr><td>1</td><td>每個主要動作先用空槓／輕重量做 2–3 組熱身，確認動作模式</td></tr>
+        <tr><td>2</td><td>正式組挑一個「做滿次數上限、還有 2–3 下餘力」的重量，做完記下來</td></tr>
+        <tr><td>3</td><td>下次訓練依感覺微調，2–3 次後重量會穩定，之後照 Progression 規則走</td></tr>
+      </table>
+      <div class="section-title" style="margin-top:14px;"><span class="num"></span><h2>加重幅度</h2></div>
+      <table class="data">
+        <tr><th>動作類型</th><th>增量</th><th>次數掉了怎麼辦</th></tr>
+        <tr><td>下肢大重量<br>Squat / Trap-bar Deadlift</td><td>+5 kg</td><td rowspan="2">掉到區間下限以內＝正常，停在這個重量把次數推回上限再繼續加。掉到下限以下＝加太多了，退回上一重量，改用一半的增幅。</td></tr>
+        <tr><td>上肢大重量<br>Bench Press / OHP</td><td>+2.5 kg</td></tr>
+        <tr><td>其他動作</td><td>先加次數</td><td>次數做到上限還有餘力 → 加最小可加重量（啞鈴 +2kg、滑輪 +2.5kg）</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><span class="num">04</span><h2>Recovery · Deload</h2></div>
+      <div class="note">出現任一項 → 當週執行 Deload</div>
+      ${DELOAD_TRIGGERS.map((t,i)=>`<div class="faq-item"><div class="q">${i+1}. ${t}</div></div>`).join("")}
+      <div class="section-title" style="margin-top:14px;"><span class="num"></span><h2>Deload 怎麼做（1 週）</h2></div>
+      <table class="data">
+        <tr><th>項目</th><th>調整</th></tr>
+        ${DELOAD_ADJUST.map(a=>`<tr><td>${a.k}</td><td>${a.v}</td></tr>`).join("")}
+      </table>
+      <div class="note">熱量赤字本身會壓縮恢復能力。沒有明確停損點容易演變成硬撐到主要動作全面倒退才發現，那時候要恢復回去代價更高。（睡眠、壓力、每日步數、飲食熱量與蛋白質尚未提供，之後補上可以讓 deload 判斷更準。）</div>
+    </div>
+  `;
+}
+
+/* ============ BIND DYNAMIC ============ */
+function bindDynamic(){
+  document.querySelectorAll("[data-start]").forEach(b=> b.addEventListener("click", ()=> startSession(b.dataset.start)));
+
+  document.querySelectorAll("[data-deload]").forEach(cb=>{
+    cb.addEventListener("change", (e)=>{
+      state.deloadChecklist[cb.dataset.deload] = e.target.checked;
+      saveState(); render();
+    });
+  });
+
+  // session inputs
+  document.querySelectorAll("[data-w]").forEach(inp=> inp.addEventListener("input", e=>{
+    const [i,si]=inp.dataset.w.split("-").map(Number); sessionCtx.sets[i][si].weight = e.target.value;
+  }));
+  document.querySelectorAll("[data-r]").forEach(inp=> inp.addEventListener("input", e=>{
+    const [i,si]=inp.dataset.r.split("-").map(Number); sessionCtx.sets[i][si].reps = e.target.value;
+  }));
+  document.querySelectorAll("[data-i]").forEach(inp=> inp.addEventListener("input", e=>{
+    const [i,si]=inp.dataset.i.split("-").map(Number); sessionCtx.sets[i][si].rir = e.target.value;
+  }));
+  document.querySelectorAll("[data-d]").forEach(inp=> inp.addEventListener("change", e=>{
+    const [i,si]=inp.dataset.d.split("-").map(Number); sessionCtx.sets[i][si].done = e.target.checked;
+  }));
+  document.querySelectorAll("[data-swapopen]").forEach(b=> b.addEventListener("click", ()=>{
+    const i = +b.dataset.swapopen;
+    sessionCtx.swapOpen = (sessionCtx.swapOpen===i) ? null : i;
+    render();
+  }));
+  document.querySelectorAll("[data-swapto]").forEach(b=> b.addEventListener("click", ()=>{
+    const [is, ai] = b.dataset.swapto.split("-");
+    const i = +is;
+    const hasData = sessionCtx.sets[i].some(r=> r.weight!=="" || r.reps!=="" || r.rir!=="" || r.done);
+    if(hasData && !confirm("這個動作已經填了紀錄，換動作會清掉這個動作已填的組數。要換嗎？")) return;
+    if(!sessionCtx.swaps) sessionCtx.swaps = {};
+    if(ai==="back") delete sessionCtx.swaps[i]; else sessionCtx.swaps[i] = +ai;
+    sessionCtx.sets[i] = blankSets(exAt(sessionCtx.day,i,sessionCtx.swaps).sets);
+    sessionCtx.swapOpen = null;
+    render();
+  }));
+  document.querySelectorAll("[data-timer]").forEach(b=> b.addEventListener("click", ()=> bindTimer(+b.dataset.timer, +b.dataset.rest)));
+  document.querySelectorAll("[data-apply-sugg]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const name = b.dataset.applySugg, amt = parseFloat(b.dataset.amt);
+      const w = state.weights[name] || {};
+      const base = w.current!=null ? w.current : 0;
+      w.current = base + amt; w.suggested = null;
+      state.weights[name] = w; saveState(); render();
+    });
+  });
+  const noteEl = document.getElementById("sessionNote");
+  if(noteEl) noteEl.addEventListener("input", e=> sessionCtx.note = e.target.value);
+
+  const finishBtn = document.getElementById("finishSession");
+  if(finishBtn) finishBtn.addEventListener("click", ()=>{
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+    const startTime = sessionCtx.startTime || null;
+    const endTime = startTime ? Date.now() : null;
+    if(sessionCtx.day==="cardio"){
+      state.sessions.push({id:Date.now(), date:todayStr(), day:"cardio", note:sessionCtx.note, startTime, endTime});
+    } else {
+      const d = DAYS[sessionCtx.day];
+      const flags = [];
+      d.exercises.forEach((baseEx,i)=>{
+        const ex = exAt(sessionCtx.day,i,sessionCtx.swaps);
+        const rows = sessionCtx.sets[i].filter(r=>r.weight!=="" && r.reps!=="");
+        if(rows.length < ex.sets) return;
+        // update current weight to the most recent logged weight
+        const lastWeight = parseFloat(rows[rows.length-1].weight);
+        if(!isNaN(lastWeight)){
+          const w = state.weights[ex.name] || {};
+          w.current = lastWeight;
+          state.weights[ex.name] = w;
+        }
+        const ceiling = repCeiling(ex.reps);
+        const prescRir = parseFloat(ex.rir);
+        const hitCeiling = rows.every(r=> parseFloat(r.reps) >= ceiling);
+        const rirOk = isNaN(prescRir) ? true : rows.every(r=> r.rir!=="" && parseFloat(r.rir) >= prescRir);
+        if(hitCeiling && rirOk){
+          const inc = incrementFor(ex.cat);
+          if(inc){
+            const w = state.weights[ex.name] || {};
+            w.suggested = {text:`${ex.name} 已達標 → 下次加重`, amt:inc.amt};
+            state.weights[ex.name] = w;
+            flags.push(`${ex.name}：已達標，下次 ${inc.label}`);
+          } else {
+            flags.push(`${ex.name}：次數已達上限且 RIR 足夠，可考慮加最小重量（啞鈴 +2kg／滑輪 +2.5kg）`);
+          }
+        }
+      });
+      state.sessions.push({id:Date.now(), date:todayStr(), day:sessionCtx.day, sets:sessionCtx.sets, swaps:sessionCtx.swaps||{}, note:sessionCtx.note, flags, startTime, endTime});
+    }
+    saveState(); clearDraft(); sessionCtx=null; currentTab="log"; render();
+  });
+  const cancelBtn = document.getElementById("cancelSession");
+  if(cancelBtn) cancelBtn.addEventListener("click", ()=>{
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+    clearDraft(); sessionCtx=null; currentTab="home"; render();
+  });
+
+  bindExercises();
+  // log
+  document.querySelectorAll("[data-del]").forEach(b=> b.addEventListener("click", ()=>{
+    if(!confirm("確定刪除這筆紀錄？")) return;
+    state.sessions = state.sessions.filter(s=> s.id !== +b.dataset.del);
+    saveState(); render();
+  }));
+  const addWc = document.getElementById("addWeekCheck");
+  if(addWc) addWc.addEventListener("click", ()=>{
+    state.weekChecks.push({
+      week: document.getElementById("wcWeek").value || `#${state.weekChecks.length+1}`,
+      sessions: document.getElementById("wcSessions").value || "0",
+      sleep: document.getElementById("wcSleep").value || "—",
+      bw: document.getElementById("wcBw").value || "—",
+      energy: document.getElementById("wcEnergy").value || "—",
+      recovery: document.getElementById("wcRecovery").value || "—"
+    });
+    saveState(); render();
+  });
+  const exportBtn = document.getElementById("exportBtn");
+  if(exportBtn) exportBtn.addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href=url; a.download=`thomas-backup-${todayStr()}.json`; a.click();
+    URL.revokeObjectURL(url);
+  });
+  const importFile = document.getElementById("importFile");
+  if(importFile) importFile.addEventListener("change", e=>{
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(!confirm("匯入將覆蓋目前所有紀錄，確定嗎？")) return;
+        state = {sessions:data.sessions||[], weights:data.weights||{}, weekChecks:data.weekChecks||[], deloadChecklist:data.deloadChecklist||{}};
+        saveState(); render();
+      }catch(err){ alert("檔案格式錯誤，無法匯入"); }
+    };
+    reader.readAsText(file);
+  });
+}
+
+// 分頁切到背景／即將關閉的瞬間強制存一次草稿——iOS Safari 真的會隨時把
+// 背景分頁記憶體整個清掉，不能只靠使用者操作觸發的 render() 去存。
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") saveDraft(); });
+window.addEventListener("pagehide", saveDraft);
+
+applyTheme();
+document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+restoreDraftIfAny();
+render();
+</script>
+</body>
+</html>
