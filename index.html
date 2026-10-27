@@ -338,6 +338,14 @@ table.data th{background:var(--paper2);font-size:10.5px;letter-spacing:.04em;col
 .exalt .ah{font-size:13px;line-height:1.6;color:var(--muted);margin-top:6px;}
 .exaltnote{font-size:12px;line-height:1.6;color:var(--muted);margin-top:6px;}
 
+/* ===== 備份提醒／替代進度 ===== */
+.bkwarn{border:1px solid var(--warn);background:var(--warn-soft);color:var(--ink);padding:12px 14px;border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.6;}
+.bkwarn b{color:var(--warn);}
+.bkwarn .btn{margin-top:8px;}
+.altsub{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.swp .opt .row2{display:flex;gap:6px;margin-top:8px;}
+.swp .opt .row2 .btn{flex:1;}
+.deftag{display:inline-block;margin-left:6px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);}
 /* ===== 換動作 ===== */
 .swapbtn{background:none;border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:800;font-family:inherit;
   padding:3px 9px;border-radius:999px;cursor:pointer;margin-left:6px;letter-spacing:.03em;}
@@ -452,6 +460,7 @@ function loadState(){
 }
 function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 let state = loadState();
+if(!state.defaultSwaps) state.defaultSwaps = {};
 
 /* ============ 訓練中草稿（Draft） ============
    解決手機瀏覽器把背景分頁記憶體整個清掉／重整，導致進行中的訓練
@@ -502,6 +511,10 @@ function sessionDurationMin(s){
   return Math.max(1, Math.round((s.endTime - s.startTime)/60000));
 }
 
+function todayFmt(ts){
+  const d=new Date(ts);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 
 function incrementFor(cat){
@@ -1161,6 +1174,65 @@ function exAt(dayKey, i, swaps){
   };
 }
 function blankSets(n){ return Array.from({length:n}, ()=>({weight:"",reps:"",rir:"",done:false})); }
+
+/* 徒手／彈力帶類動作：重量欄可空白，只填次數就算完成這組 */
+const BW_NAMES = new Set(["懸吊舉腿","徒手雙腳／單腳提踵","伏地挺身（可加負重）","伏地挺身","彈力帶夾胸","彈力帶下壓",
+  "窄距伏地挺身／椅子撐體","北歐腿後彎舉","滑板／毛巾腿後彎舉","彈力帶腿推（躺姿）","反向划船（懸吊）","反向划船",
+  "彈力帶坐姿划船","彈力帶拉開（Pull-apart）","彈力帶前平舉","彈力帶腿伸展","彈力帶輔助引體向上","彈力帶下拉",
+  "羅馬椅（Captain's chair）舉腿","仰臥舉腿","反向捲腹／下斜板舉腿"]);
+function isBW(ex){ return BW_NAMES.has(ex.name); }
+
+/* 「以後都用這個替代」：key＝原動作 en，value＝替代動作名稱（用名稱而非編號，課表順序變了也對得上） */
+function defaultSwapsFor(dayKey){
+  const out = {};
+  const ds = state.defaultSwaps||{};
+  DAYS[dayKey].exercises.forEach((ex,i)=>{
+    const n = ds[ex.en]; if(!n) return;
+    const ai = (ALT_LIB[ex.en]||[]).findIndex(a=>a.n===n);
+    if(ai>=0) out[i] = ai;
+  });
+  return out;
+}
+
+/* 替代動作的使用統計（給「重量進度」頁） */
+function altUsage(){
+  const map = new Map();
+  [...state.sessions].sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{
+    if(s.day==="cardio" || !DAYS[s.day] || !s.swaps) return;
+    Object.keys(s.swaps).forEach(k=>{
+      const i=+k; if(!DAYS[s.day].exercises[i]) return;
+      const ex = exAt(s.day,i,s.swaps); if(!ex.swapOf) return;
+      const rows = (s.sets[i]||[]).filter(r=>r.reps!=="");
+      const u = map.get(ex.name) || {name:ex.name, swapOf:ex.swapOf, count:0, last:null, lastRows:[]};
+      u.count++; u.last=s.date; u.lastRows=rows; map.set(ex.name,u);
+    });
+  });
+  Object.entries(state.defaultSwaps||{}).forEach(([en,n])=>{
+    if(map.has(n)) return;
+    const base = allExercises().find(e=>e.en===en);
+    if(base) map.set(n,{name:n, swapOf:base.name, count:0, last:null, lastRows:[]});
+  });
+  return [...map.values()];
+}
+
+/* ===== 備份 ===== */
+const BACKUP_DAYS = 14;
+function backupDue(){
+  if(!state.sessions.length) return false;
+  if(!state.lastBackup) return true;
+  return (Date.now()-state.lastBackup) > BACKUP_DAYS*86400000;
+}
+function sessionsSinceBackup(){
+  if(!state.lastBackup) return state.sessions.length;
+  return state.sessions.filter(s=> s.id > state.lastBackup).length;
+}
+function doExport(prefix){
+  state.lastBackup = Date.now(); saveState();
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`${prefix}-backup-${todayStr()}.json`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
 
 const THEME_LIGHT_BAR = "#0D0F11";
 
@@ -1967,6 +2039,8 @@ function renderHome(){
   const checkedCount = Object.values(state.deloadChecklist).filter(Boolean).length;
 
   return `
+    ${backupDue() ? `<div class="bkwarn"><b>該備份了</b>　${state.lastBackup ? `距離上次備份超過 ${BACKUP_DAYS} 天` : "還沒有備份過"}，有 ${sessionsSinceBackup()} 筆訓練只存在這支手機的瀏覽器裡。清除瀏覽器資料或換手機就會不見。
+      <button class="btn accent sm block" id="exportBtnHome">現在匯出備份</button></div>` : ""}
     <div class="card">
       <div class="section-title"><span class="num">01</span><h2>本週訓練</h2></div>
       <div class="week-strip">
@@ -2019,11 +2093,12 @@ function startSession(dayKey){
       day: dayKey,
       startTime: Date.now(),
       endTime: null,
-      sets: d.exercises.map(ex=> blankSets(ex.sets)),
-      swaps: {},
+      swaps: defaultSwapsFor(dayKey),
+      sets: null,
       swapOpen: null,
       note: ""
     };
+    sessionCtx.sets = d.exercises.map((ex,i)=> blankSets(exAt(dayKey,i,sessionCtx.swaps).sets));
   }
   currentTab="session"; render();
 }
@@ -2062,21 +2137,28 @@ function renderSession(){
 function renderSwapPanel(i){
   const baseEx = DAYS[sessionCtx.day].exercises[i];
   const cur = sessionCtx.swaps ? sessionCtx.swaps[i] : null;
+  const def = (state.defaultSwaps||{})[baseEx.en] || null;
   const alts = ALT_LIB[baseEx.en]||[];
   return `<div class="swp">
     <div class="st">選一個改做（組數／次數會一起換）</div>
-    ${cur!==null && cur!==undefined ? `<div class="opt">
+    ${(cur!==null && cur!==undefined) || def ? `<div class="opt">
       <div class="an">原動作：${baseEx.name}</div>
       <div class="rx"><b>${baseEx.sets}</b> 組 × <b>${baseEx.reps}</b> 次 · RIR <b>${baseEx.rir}</b> · 休息 <b>${baseEx.rest}</b></div>
-      <button class="btn ghost sm go" data-swapto="${i}-back">換回原動作</button></div>` : ""}
+      <div class="row2">
+        ${cur!==null && cur!==undefined ? `<button class="btn ghost sm" data-swapto="${i}-back">今天換回</button>` : ""}
+        ${def ? `<button class="btn ghost sm" data-swapdef="${i}-back">以後都做原動作</button>` : ""}
+      </div></div>` : ""}
     ${alts.map((a,ai)=>{
       const e = exAt(sessionCtx.day,i,{[i]:ai});
-      const on = cur===ai;
+      const on = cur===ai, isDef = def===a.n;
       return `<div class="opt">
-        <div class="an">${a.n}${on?"（目前）":""}</div>
+        <div class="an">${a.n}${on?"（目前）":""}${isDef?`<span class="deftag">預設</span>`:""}</div>
         <div class="ag">需要：${a.g}</div>
         <div class="rx"><b>${e.sets}</b> 組 × <b>${e.reps}</b> 次 · RIR <b>${e.rir}</b> · 休息 <b>${e.rest}</b></div>
-        <button class="btn accent sm go" data-swapto="${i}-${ai}" ${on?"disabled":""}>改做這個</button>
+        <div class="row2">
+          <button class="btn ghost sm" data-swapto="${i}-${ai}" ${on?"disabled":""}>只有今天</button>
+          <button class="btn accent sm" data-swapdef="${i}-${ai}" ${isDef?"disabled":""}>以後都做這個</button>
+        </div>
       </div>`;
     }).join("")}
     <button class="btn ghost sm" style="width:100%" data-swapopen="${i}">收起</button>
@@ -2092,7 +2174,7 @@ function renderExerciseCard(ex, i){
   return `
     <div class="ex-card">
       <div class="ex-head">
-        <div class="top"><span class="name">${String(i+1).padStart(2,"0")} · ${ex.name}${ex.en&&EX_LIB[ex.en]?`<button class="exguide" data-exjump="${ex.en}">怎麼做</button>`:""}${(ALT_LIB[baseEx.en]||[]).length?`<button class="swapbtn" data-swapopen="${i}">${swapped?"換別的":"沒器材？換動作"}</button>`:""}${swapped?`<span class="swaptag">替代</span>`:""}</span></div>
+        <div class="top"><span class="name">${String(i+1).padStart(2,"0")} · ${ex.name}${ex.en&&EX_LIB[ex.en]?`<button class="exguide" data-exjump="${ex.en}">怎麼做</button>`:""}${(ALT_LIB[baseEx.en]||[]).length?`<button class="swapbtn" data-swapopen="${i}">${swapped?"換別的":"沒器材？換動作"}</button>`:""}${swapped?`<span class="swaptag">替代</span>`:""}${swapped && (state.defaultSwaps||{})[baseEx.en]===ex.name?`<span class="deftag">預設</span>`:""}</span></div>
         <div class="en">${swapped?("替代自："+baseEx.name+"（"+baseEx.en+"）"):ex.en}</div>
         <div class="presc">
           <span>組數 <b>${ex.sets}</b></span>
@@ -2102,6 +2184,7 @@ function renderExerciseCard(ex, i){
           <span>建議 <b>${ex.load}${ex.loadUnit?" "+ex.loadUnit:""}</b></span>
         </div>
         ${ex.note?`<div class="cue">${ex.note}</div>`:""}
+        ${isBW(ex) ? `<div class="cue">徒手／彈力帶動作：只填次數就算完成，有加負重再填重量。</div>` : ""}
         ${currentW!=null ? `<div class="cue">上次重量：<b style="color:var(--ink)">${currentW} kg</b></div>` : ""}
         ${suggestion ? `
           <div class="sugg">
@@ -2115,7 +2198,7 @@ function renderExerciseCard(ex, i){
         ${rows.map((r,si)=>`
           <tr>
             <td class="sn">${si+1}</td>
-            <td><input type="number" inputmode="decimal" data-w="${i}-${si}" value="${r.weight}" placeholder="${currentW!=null?currentW:'—'}"></td>
+            <td><input type="number" inputmode="decimal" data-w="${i}-${si}" value="${r.weight}" placeholder="${isBW(ex)?'自體重':(currentW!=null?currentW:'—')}"></td>
             <td><input type="number" inputmode="numeric" data-r="${i}-${si}" value="${r.reps}" placeholder="${repCeiling(ex.reps)||'—'}"></td>
             <td><input type="number" inputmode="numeric" data-i="${i}-${si}" value="${r.rir}" placeholder="${ex.rir!=="—"?ex.rir:''}"></td>
             <td class="done-cell"><input type="checkbox" data-d="${i}-${si}" ${r.done?"checked":""}></td>
@@ -2182,6 +2265,26 @@ function renderProgress(){
         </div>`;
       }).join("")}
     </div>
+    ${(()=>{
+      const alts = altUsage();
+      if(!alts.length) return "";
+      return `<div class="card">
+        <div class="section-title"><span class="num">04</span><h2>替代動作</h2></div>
+        <div class="note">換過的動作各自記重量，不會和原動作混在一起。標「預設」的是設成以後都做的替代。</div>
+        ${alts.map(u=>{
+          const w = state.weights[u.name]||{};
+          const isDef = Object.values(state.defaultSwaps||{}).includes(u.name);
+          const bw = BW_NAMES.has(u.name);
+          const lastTxt = u.lastRows.length ? u.lastRows.map(r=>`${r.weight!==""?r.weight+"kg×":""}${r.reps}`).join("、") : "";
+          return `<div class="wex-card">
+            <div class="top"><span class="name">${u.name}${isDef?`<span class="deftag">預設</span>`:""}</span><span class="cat">替代 ${u.swapOf}</span></div>
+            <div class="w">${w.current!=null ? w.current+' <span>kg</span>' : (bw ? '自體重' : '—')}</div>
+            <div class="altsub">${u.count ? `做過 ${u.count} 次 · 最後 ${u.last}${lastTxt?" · "+lastTxt:""}` : "設為預設，還沒做過"}</div>
+            ${w.suggested ? `<div class="altsub" style="color:var(--accent)">${w.suggested.text}</div>` : ""}
+          </div>`;
+        }).join("")}
+      </div>`;
+    })()}
   `;
 }
 
@@ -2215,6 +2318,7 @@ function renderLog(){
         <button class="btn ghost sm" id="exportBtn">匯出備份 (JSON)</button>
         <label class="btn ghost sm" style="cursor:pointer;">匯入備份<input type="file" id="importFile" accept="application/json" class="hidden"></label>
       </div>
+      <div class="altsub">上次備份：${state.lastBackup ? todayFmt(state.lastBackup) : "從未備份"}</div>
     </div>
     ${sessions.length===0 ? `<div class="empty-state">還沒有任何紀錄，練完第一次訓練後會出現在這裡</div>` :
       sessions.map(s=>{
@@ -2240,9 +2344,9 @@ function renderLog(){
           <div class="log-ex">
             ${d.exercises.map((baseEx,i)=>{
               const ex = exAt(s.day,i,s.swaps);
-              const rows = s.sets[i].filter(r=>r.weight||r.reps);
+              const rows = (s.sets&&s.sets[i]||[]).filter(r=>r.weight||r.reps);
               if(rows.length===0) return "";
-              const summary = rows.map(r=>`${r.weight||"—"}kg×${r.reps||"—"}${r.rir!==""?" RIR"+r.rir:""}`).join("、");
+              const summary = rows.map(r=>`${r.weight!==""&&r.weight!=null?r.weight+"kg":(isBW(ex)?"自體重":"—kg")}×${r.reps||"—"}${r.rir!==""?" RIR"+r.rir:""}`).join("、");
               return `<div><b>${ex.name}</b>${ex.swapOf?`（替代 ${ex.swapOf}）`:""}：${summary}</div>`;
             }).join("")}
           </div>
@@ -2341,16 +2445,34 @@ function bindDynamic(){
     sessionCtx.swapOpen = (sessionCtx.swapOpen===i) ? null : i;
     render();
   }));
+  function applySwap(i, ai, skipConfirm){
+    if(!sessionCtx.swaps) sessionCtx.swaps = {};
+    if(ai===null) delete sessionCtx.swaps[i]; else sessionCtx.swaps[i] = ai;
+    sessionCtx.sets[i] = blankSets(exAt(sessionCtx.day,i,sessionCtx.swaps).sets);
+    sessionCtx.swapOpen = null;
+    render();
+  }
   document.querySelectorAll("[data-swapto]").forEach(b=> b.addEventListener("click", ()=>{
     const [is, ai] = b.dataset.swapto.split("-");
     const i = +is;
     const hasData = sessionCtx.sets[i].some(r=> r.weight!=="" || r.reps!=="" || r.rir!=="" || r.done);
     if(hasData && !confirm("這個動作已經填了紀錄，換動作會清掉這個動作已填的組數。要換嗎？")) return;
-    if(!sessionCtx.swaps) sessionCtx.swaps = {};
-    if(ai==="back") delete sessionCtx.swaps[i]; else sessionCtx.swaps[i] = +ai;
-    sessionCtx.sets[i] = blankSets(exAt(sessionCtx.day,i,sessionCtx.swaps).sets);
-    sessionCtx.swapOpen = null;
-    render();
+    applySwap(i, ai==="back" ? null : +ai);
+  }));
+  document.querySelectorAll("[data-swapdef]").forEach(b=> b.addEventListener("click", ()=>{
+    const [is, ai] = b.dataset.swapdef.split("-");
+    const i = +is;
+    const baseEx = DAYS[sessionCtx.day].exercises[i];
+    const target = ai==="back" ? null : +ai;
+    const curNow = sessionCtx.swaps ? sessionCtx.swaps[i] : null;
+    const changing = (target===null ? (curNow!==null && curNow!==undefined) : curNow!==target);
+    const hasData = sessionCtx.sets[i].some(r=> r.weight!=="" || r.reps!=="" || r.rir!=="" || r.done);
+    if(changing && hasData && !confirm("這個動作已經填了紀錄，換動作會清掉這個動作已填的組數。要換嗎？")) return;
+    if(!state.defaultSwaps) state.defaultSwaps = {};
+    if(target===null) delete state.defaultSwaps[baseEx.en];
+    else state.defaultSwaps[baseEx.en] = ALT_LIB[baseEx.en][target].n;
+    saveState();
+    if(changing) applySwap(i, target, true); else { sessionCtx.swapOpen=null; render(); }
   }));
   document.querySelectorAll("[data-timer]").forEach(b=> b.addEventListener("click", ()=> bindTimer(+b.dataset.timer, +b.dataset.rest)));
   document.querySelectorAll("[data-apply-sugg]").forEach(b=>{
@@ -2377,11 +2499,12 @@ function bindDynamic(){
       const flags = [];
       d.exercises.forEach((baseEx,i)=>{
         const ex = exAt(sessionCtx.day,i,sessionCtx.swaps);
-        const rows = sessionCtx.sets[i].filter(r=>r.weight!=="" && r.reps!=="");
+        // 徒手／彈力帶動作只要有次數就算一組；其他動作仍需重量＋次數
+        const rows = sessionCtx.sets[i].filter(r=> r.reps!=="" && (r.weight!=="" || isBW(ex)));
         if(rows.length < ex.sets) return;
-        // update current weight to the most recent logged weight
-        const lastWeight = parseFloat(rows[rows.length-1].weight);
-        if(!isNaN(lastWeight)){
+        const weighted = rows.filter(r=>r.weight!=="");
+        const lastWeight = weighted.length ? parseFloat(weighted[weighted.length-1].weight) : NaN;
+        if(!isNaN(lastWeight) && !(isBW(ex) && lastWeight===0)){
           const w = state.weights[ex.name] || {};
           w.current = lastWeight;
           state.weights[ex.name] = w;
@@ -2390,7 +2513,9 @@ function bindDynamic(){
         const prescRir = parseFloat(ex.rir);
         const hitCeiling = rows.every(r=> parseFloat(r.reps) >= ceiling);
         const rirOk = isNaN(prescRir) ? true : rows.every(r=> r.rir!=="" && parseFloat(r.rir) >= prescRir);
-        if(hitCeiling && rirOk){
+        if(hitCeiling && rirOk && isBW(ex) && isNaN(lastWeight)){
+          flags.push(`${ex.name}：次數已達上限且 RIR 足夠，下次加難度（放慢下放、加停頓或背負重）`);
+        } else if(hitCeiling && rirOk){
           const inc = incrementFor(ex.cat);
           if(inc){
             const w = state.weights[ex.name] || {};
@@ -2432,12 +2557,9 @@ function bindDynamic(){
     saveState(); render();
   });
   const exportBtn = document.getElementById("exportBtn");
-  if(exportBtn) exportBtn.addEventListener("click", ()=>{
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href=url; a.download=`thomas-backup-${todayStr()}.json`; a.click();
-    URL.revokeObjectURL(url);
-  });
+  if(exportBtn) exportBtn.addEventListener("click", ()=>{ doExport("thomas"); render(); });
+  const exportBtnHome = document.getElementById("exportBtnHome");
+  if(exportBtnHome) exportBtnHome.addEventListener("click", ()=>{ doExport("thomas"); render(); });
   const importFile = document.getElementById("importFile");
   if(importFile) importFile.addEventListener("change", e=>{
     const file = e.target.files[0]; if(!file) return;
@@ -2446,7 +2568,8 @@ function bindDynamic(){
       try{
         const data = JSON.parse(reader.result);
         if(!confirm("匯入將覆蓋目前所有紀錄，確定嗎？")) return;
-        state = {sessions:data.sessions||[], weights:data.weights||{}, weekChecks:data.weekChecks||[], deloadChecklist:data.deloadChecklist||{}};
+        state = {sessions:data.sessions||[], weights:data.weights||{}, weekChecks:data.weekChecks||[], deloadChecklist:data.deloadChecklist||{},
+                 defaultSwaps:data.defaultSwaps||{}, lastBackup:Date.now(), theme:state.theme};
         saveState(); render();
       }catch(err){ alert("檔案格式錯誤，無法匯入"); }
     };
